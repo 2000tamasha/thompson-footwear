@@ -1,11 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
-
-
+import './css/login.css';
 
 const Login = () => {
   return (
-   <div>
+   <div className="login-container">
       <h2>Login</h2>
       <div className="form-group">
         <label htmlFor="email">Email</label>
