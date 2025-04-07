@@ -77,7 +77,7 @@ p a {
   display: inline-block;
 }
 
-.link-forgot-password {
+.link-forgot-password:hover {
   color: #0056b3;
   text-decoration: underline;
 }
