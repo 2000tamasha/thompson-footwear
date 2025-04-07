@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
-import './Login.css';
+import './login.css';
+import './HomePage.css';
+
 
 const Login = () => {
   return (
