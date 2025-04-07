@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 
 
 const Register = () => {
+return(
 <div className="">
-      <h2>Login</h2>
+      <h2>Register</h2>
       <div className="">
         <label htmlFor="email">Email</label>
         <input type="email" id="email" name="email" />
@@ -13,8 +14,8 @@ const Register = () => {
         <label htmlFor="password">Password</label>
         <input type="password" id="password" name="password" />
       </div>
-      <button type="submit" className="">Login</button>
-      <p>Already have an account? <Link to="/Login">Sign in</Link></p>
+      <button type="submit" className="">Sign Up</button>
+      <p>Already have an account? <Link to="/login">Sign in</Link></p>
     </div>
   );
 
