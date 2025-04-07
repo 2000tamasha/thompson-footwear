@@ -69,3 +69,16 @@ p a {
   font-weight: 500;
 }
 
+/* == FORGOT PASSWORD LINK == */
+.link-forgot-password {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: #555;
+  display: inline-block;
+}
+
+.link-forgot-password {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
