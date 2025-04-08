@@ -6,7 +6,9 @@ import './css/register.css';
 const Register = () => {
 return(
 <div className="register-container">
-      <h2>Register</h2>
+      <h2>Sign Up</h2>
+<b>Don't miss out!</b>
+<p>Thompson Footwear's amazing benefits for new members!</p>
       <div className="form-group">
         <label htmlFor="email">Email</label>
         <input type="email" id="email" name="email"/>
@@ -19,8 +21,8 @@ return(
         <label htmlFor="password">Password</label>
         <input type="password" id="password" name="password" />
       </div>
-      <button type="submit" className="register-button">Register</button>
-      <p>Already have an account? <Link to="/login">Sign In</Link></p>
+      <button type="submit" className="register-button">Sign Up</button>
+      <p>Already have an account? <Link to="/login">Log In</Link></p>
     </div>
   );
 
