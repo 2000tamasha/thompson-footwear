@@ -31,6 +31,7 @@
   
   /* == REGISTER CONTAINER == */
   .register-container {
+    margin-top: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -59,7 +60,7 @@
   
   /* == LINK TEXT == */
   p {
-    margin-top: 30px;
+    margin-top: 15px;
     font-size: 0.95rem;
     color: #555;
   }
