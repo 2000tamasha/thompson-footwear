@@ -25,3 +25,24 @@ Thompson Footwear is a full-stack e-commerce web application developed as part o
 ## 📦 Project Structure
 thompson-footwear/ ├── frontend/ # React app (client side) │ ├── src/pages/ │ ├── src/components/ ├── backend/ # Node.js + Express API │ ├── models/ │ ├── routes/ │ └── server.js ├── .env.sample # Sample environment config └── README.md
 
+🛠️ Features
+🔍 Browse and filter products by size, category, and age
+
+👤 Register and log in (JWT authentication)
+
+🛒 Add to cart and checkout using Stripe
+
+🔐 Admin dashboard for managing inventory and orders
+
+📦 Order history and confirmation system
+
+👥 Project Contributors
+Sharan Adhikari – Backend, Project Lead
+
+Thamasha Hakmana – Frontend, UI/UX
+
+FM Zayan Ahamed – Security, QA, Deployment
+
+🏁 Status
+✅ Iteration 1 Complete
+🛠️ Iteration 2 in Progress (adding advanced admin and user features)
