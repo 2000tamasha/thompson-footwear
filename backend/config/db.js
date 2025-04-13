@@ -1,20 +1,21 @@
-//sharan adhikari 24071844
-const mysql = require('mysql2');
+// sharan adhikari 24071844
+const mysql = require('mysql2/promise'); //  Use promise wrapper
 require('dotenv').config();
 
-const db = mysql.createConnection({
+//  Create a connection pool that supports async/await
+const db = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 });
 
-db.connect((err) => {
-  if (err) {
+db.getConnection()
+  .then(() => {
+    console.log('MySQL connected!');
+  })
+  .catch((err) => {
     console.error('Database connection failed:', err.stack);
-    return;
-  }
-  console.log('MySQL connected!');
-});
+  });
 
 module.exports = db;
