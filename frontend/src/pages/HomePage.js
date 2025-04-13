@@ -1,11 +1,27 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './HomePage.css';
 
 const HomePage = () => {
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = () => {
+    const trimmed = searchTerm.trim().toLowerCase();
+
+    if (['men', 'women', 'children'].includes(trimmed)) {
+      navigate(`/products?category=${trimmed}`);
+    } else if (trimmed) {
+      navigate(`/products?search=${encodeURIComponent(trimmed)}`);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') handleSearch();
+  };
+
   return (
     <div className="homepage">
-
       <div className="hero-image">
         <img src="/images/thompson-banner.png" alt="Thompson Footwear Banner" />
       </div>
@@ -18,6 +34,37 @@ const HomePage = () => {
         </Link>
       </div>
 
+      {/* 🔍 Search Bar */}
+      <div className="search-bar" style={{ textAlign: 'center', margin: '30px' }}>
+        <input
+          type="text"
+          placeholder="Search or type 'men', 'women', 'children'..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={handleKeyDown}
+          style={{
+            padding: '10px',
+            width: '300px',
+            borderRadius: '6px',
+            border: '1px solid #ccc',
+          }}
+        />
+        <button
+          onClick={handleSearch}
+          style={{
+            padding: '10px 15px',
+            marginLeft: '10px',
+            backgroundColor: '#000',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+          }}
+        >
+          Search
+        </button>
+      </div>
+
       <div className="tagline">
         <h2>👟 Style That Moves With You</h2>
         <p>Step into comfort, step into confidence. Shop Men, Women, and Kids shoes now.</p>
@@ -26,9 +73,9 @@ const HomePage = () => {
       <div className="category-section">
         <h2>Shop by Category</h2>
         <div className="category-cards">
-          <Link to="/products?category=men"><div className="category-card men">Men</div></Link>
-          <Link to="/products?category=women"><div className="category-card women">Women</div></Link>
-          <Link to="/products?category=children"><div className="category-card kids">Kids</div></Link>
+          <button className="category-card men" onClick={() => navigate('/products?category=men')}>Men</button>
+          <button className="category-card women" onClick={() => navigate('/products?category=women')}>Women</button>
+          <button className="category-card kids" onClick={() => navigate('/products?category=children')}>Kids</button>
         </div>
       </div>
 
