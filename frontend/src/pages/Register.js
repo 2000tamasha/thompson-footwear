@@ -31,11 +31,12 @@ const Register = () => {
     <form onSubmit={handleSubmit} style={{
       maxWidth: '500px',
       margin: '80px auto',
+      marginTop:'150px',
       padding: '30px',
       background: '#fff',
       borderRadius: '8px',
       boxShadow: '0 0 20px rgba(0,0,0,0.1)',
-      fontFamily: 'sans-serif'
+      fontFamily: 'Poppins'
     }}>
       <h2>Create your account</h2>
 
@@ -78,6 +79,7 @@ const Register = () => {
         background: 'black',
         color: 'white',
         padding: '12px',
+        fontFamily: 'Poppins',
         borderRadius: '4px',
         border: 'none',
         fontWeight: 'bold',
