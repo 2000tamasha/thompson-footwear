@@ -44,8 +44,8 @@ const Home = () => {
   }, [products, search]);
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>
+    <div style={{ padding: '20px' , fontFamily:'Poppins', marginTop:'75px'}}>
+      <h2 style={{ textAlign: 'center', marginBottom: '20px',fontFamily:'Poppins' }}>
         {search
           ? `Results for "${search}"`
           : category
