@@ -21,7 +21,7 @@ const Cart = () => {
   }, 0);
 
   return (
-    <div style={{ padding: "40px" }}>
+    <div style={{ padding: "40px" ,marginTop:'50px' }}>
       <h2>Your Cart 🛍️</h2>
 
       {cartItems.length === 0 ? (
