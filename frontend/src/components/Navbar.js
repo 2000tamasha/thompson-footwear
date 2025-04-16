@@ -1,4 +1,4 @@
-// Navbar.js – Updated by Sharan Adhikari 24071844
+// Navbar.js – Created by Sharan Adhikari 24071844 & Updated by Thamasha Kodithuwakku 24351177
 
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -11,7 +11,14 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <h2 className="logo">Thompson Footwear 👟</h2>
+      <Link to="/" className="logo">
+        <img src="/images/storelogo.png" alt="Thompson Footwear Logo" style={{
+          position: 'relative',
+          height: '150px',     // Adjust this to your preferred size
+          width: 'auto',      // Maintains aspect ratio
+          objectFit: 'contain'
+        }} />
+      </Link>
       <ul className="nav-links">
         <li><Link to="/">Home</Link></li>
         <li><Link to="/products">Shop</Link></li>
