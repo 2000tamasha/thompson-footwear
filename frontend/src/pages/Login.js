@@ -21,7 +21,7 @@ const Login = () => {
       background: '#fff',
       borderRadius: '8px',
       boxShadow: '0 0 20px rgba(0,0,0,0.1)',
-      fontFamily: 'sans-serif'
+      fontFamily: 'Poppins'
     }}>
       <h2 style={{ marginBottom: '20px' }}>Enter your email to Sign In or Join Us</h2>
 
@@ -34,6 +34,7 @@ const Login = () => {
         style={{
           width: '100%',
           padding: '10px',
+          fontFamily: 'Poppins',
           margin: '10px 0 20px',
           borderRadius: '4px',
           border: '1px solid #ccc'
@@ -47,6 +48,7 @@ const Login = () => {
         style={{
           width: '100%',
           padding: '10px',
+          fontFamily: 'Poppins',
           marginBottom: '20px',
           borderRadius: '4px',
           border: '1px solid #ccc'
@@ -58,7 +60,7 @@ const Login = () => {
         <option>United Kingdom</option>
       </select>
 
-      <p style={{ fontSize: '12px', marginBottom: '20px' }}>
+      <p style={{ fontSize: '12px', marginBottom: '20px'  }}>
         By continuing, I agree to Thompson Footwear's <a href="#" style={{ color: '#555' }}>Privacy Policy</a> and 
         <a href="#" style={{ color: '#555' }}> Terms of Use</a>.
       </p>
@@ -71,6 +73,7 @@ const Login = () => {
           color: 'white',
           padding: '12px',
           borderRadius: '4px',
+          fontFamily: 'Poppins',
           border: 'none',
           fontWeight: 'bold',
           cursor: 'pointer',
@@ -88,6 +91,7 @@ const Login = () => {
           background: 'white',
           color: 'black',
           padding: '12px',
+          fontFamily: 'Poppins',
           borderRadius: '4px',
           border: '1px solid black',
           fontWeight: 'bold',
