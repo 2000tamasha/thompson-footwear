@@ -1,4 +1,4 @@
-// Register.js – Sharan Adhikari
+// Register.js – Sharan Adhikari & reviewd by Thamasha Kodithuwakku 24351177
 
 import React, { useState } from 'react';
 
@@ -62,14 +62,14 @@ const Register = () => {
       <div style={{ margin: '15px 0' }}>
         <label>
           <input type="checkbox" name="updates" checked={form.updates} onChange={handleChange} />
-          {' '}Get email updates from thompsonfootwear
+          {' '}Get email updates from Thompson footwear
         </label>
       </div>
 
       <div style={{ margin: '15px 0' }}>
         <label>
           <input type="checkbox" name="agree" checked={form.agree} onChange={handleChange} required />
-          {' '}I agree to Thompson'sfoowear  Policy and Terms
+          {' '}I agree to Thompson Footwear's  Policy and Terms
         </label>
       </div>
 
