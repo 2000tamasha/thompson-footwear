@@ -37,7 +37,14 @@ const Cart = () => {
               <div>
                 <h3>{item.name}</h3>
                 <p>${parseFloat(item.price).toFixed(2)}</p>
-                <button onClick={() => removeFromCart(index)}>Remove</button>
+                <button onClick={() => removeFromCart(index)} style={{
+              marginTop: "20px",
+              padding: "10px 20px",
+              backgroundColor: "#f44336",
+              color: "white",
+              border: "none",
+              cursor: "pointer"
+            }} >Remove</button>
               </div>
             </div>
           ))}
