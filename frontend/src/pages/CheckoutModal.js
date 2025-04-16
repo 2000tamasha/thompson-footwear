@@ -33,14 +33,20 @@ const CheckoutModal = ({ onClose }) => {
             onClose(); // close current modal
             window.dispatchEvent(new Event("openGuestCheckout")); // trigger guest modal
           }}
-          style={{ margin: "10px", padding: "10px 15px" }}
+          style={{ margin: "10px", padding: "10px 15px", backgroundColor: "black",
+            color: "white",
+            border: "none",
+            cursor: "pointer" }}
         >
           Checkout as Guest
         </button>
 
         <button 
           onClick={() => navigate("/login")}
-          style={{ margin: "10px", padding: "10px 15px" }}
+          style={{ margin: "10px", padding: "10px 15px",backgroundColor: "black",
+            color: "white",
+            border: "none",
+            cursor: "pointer" }}
         >
           Sign In & Checkout
         </button>
