@@ -33,7 +33,7 @@ const Login = () => {
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@example.com"
         style={{
-          width: '100%',
+          width: '95%',
           padding: '10px',
           fontFamily: 'Poppins',
           margin: '10px 0 20px',
