@@ -30,7 +30,14 @@ const ProductCard = ({ product }) => {
       </p>
       <p className="stock">In Stock: {product.stock}</p>
 
-      <button onClick={handleAddToCart}>Add to Cart</button>
+      <button onClick={handleAddToCart} style={{
+              marginTop: "20px",
+              padding: "10px 20px",
+              backgroundColor: "black",
+              color: "white",
+              border: "none",
+              cursor: "pointer"
+            }} >Add to Cart</button>
     </div>
   );
 };
