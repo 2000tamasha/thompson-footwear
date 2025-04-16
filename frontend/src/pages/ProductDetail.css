@@ -11,10 +11,13 @@
   .image-col img {
     width: 400px;
     border-radius: 12px;
+    margin-top: 34px;
   }
   
   .details-col {
     flex: 1;
+    font-family: 'Poppins';
+   
   }
   
   .size-options {
@@ -22,6 +25,7 @@
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 10px;
+    
   }
   
   .size-options button {
@@ -30,6 +34,7 @@
     background: #fff;
     cursor: pointer;
     border-radius: 5px;
+    font-family: 'Poppins';
   }
   
   .size-options .selected {
@@ -46,6 +51,7 @@
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
+    font-family: 'Poppins';
     
   }
   
@@ -56,6 +62,7 @@
     background: transparent;
     cursor: pointer;
     border-radius: 6px;
+    font-family: 'Poppins';
   }
   
   .promo-note {
@@ -68,5 +75,6 @@
     margin-top: 25px;
     font-size: 15px;
     line-height: 1.6;
+    font-family: 'Poppins';
   }
   
