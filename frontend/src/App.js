@@ -12,22 +12,27 @@ import Register from './pages/Register';       // Active register page
 import Success from './pages/Success';         // After payment success
 import Admin from './pages/Admin';             // Admin panel
 import Navbar from './components/Navbar';      // Top navigation
+import Footer from './components/Footer'; //Footer
+import './App.css';
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Navbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/products" element={<Home />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/success" element={<Success />} />
-          <Route path="/admin" element={<Admin />} /> {/*  Admin route */}
-        </Routes>
+        <div className="content">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/products" element={<Home />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/success" element={<Success />} />
+            <Route path="/admin" element={<Admin />} />
+          </Routes>
+        </div>
+        <Footer />
       </div>
     </Router>
   );
