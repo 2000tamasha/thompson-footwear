@@ -1,6 +1,5 @@
 .homepage {
-  font-family: 'Poppins',Arial, sans-serif;
-  background-color: #ffffff;
+  font-family: 'Poppins';
   background: linear-gradient(to right, #494747, #dad6d6, #f5f5f5);
   min-height: 100vh;
 }
@@ -326,7 +325,7 @@
   background: linear-gradient(to right, #ffffff, #f1f9ff);
   padding: 4rem 2rem;
   max-width: 700px;
-  margin: 5rem auto;
+  margin: 5rem auto 0 auto;
   border-radius: 16px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
   text-align: center;
@@ -396,19 +395,6 @@
   background-color: #0056b3;
 }
 
-/* === FOOTER === */
-.footer {
-  margin-top: 4rem;
-  background-color: #222;
-  color: #ccc;
-  text-align: center;
-  padding: 2rem 1rem;
-  font-size: 0.9rem;
-}
-
-.footer p {
-  margin: 0.3rem 0;
-}
 
 .search-container {
   text-align: center;
