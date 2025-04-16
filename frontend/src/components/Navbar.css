@@ -1,31 +1,40 @@
 .navbar {
-    background-color: #333;
-    color: white;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .logo {
-    font-size: 1.5rem;
-  }
-  
-  .nav-links {
-    list-style: none;
-    display: flex;
-    gap: 1.5rem;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .nav-links a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  .nav-links a:hover {
-    color: #ffcc00;
-  }
-  
+  position: absolute;         /* Puts it over the slideshow */
+  top: -30px; /* moving nav bar up a little */
+  width: 95%;
+  max-width: 100%;                /* Full navbar width */
+  z-index: 10;                /* Ensure navbar above the slideshow */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  background: transparent;   
+  color: white;               /* Text visible on dark background */
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: rgb(179, 170, 170);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  font-family: 'Poppins';
+}
+
+.nav-links a:hover {
+  color: #ffcc00;
+}
+
+
+.logo {
+  display: flex;
+  align-items: left;
+  text-decoration: none;
+}
+
+
