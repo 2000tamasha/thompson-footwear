@@ -11,7 +11,7 @@ const Admin = () => {
   }, []);
 
   return (
-    <div style={{ padding: '40px',marginTop:'50px' }}>
+    <div style={{ padding: '40px',marginTop:'50px',fontFamily:'Poppins' }}>
       <h2>Admin Panel – All Orders</h2>
       {orders.length === 0 ? (
         <p>No orders found.</p>
@@ -19,7 +19,7 @@ const Admin = () => {
         orders.map(order => (
           <div
             key={order.id}
-            style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '20px' }}
+            style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '20px',fontFamily:'Poppins' }}
           >
             <p><strong>Name:</strong> {order.full_name}</p>
             <p><strong>Email:</strong> {order.user_email}</p>
