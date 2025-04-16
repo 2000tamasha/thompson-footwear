@@ -232,9 +232,6 @@ const HomePage = () => {
         </form>
       </div>
 
-      <footer className="footer">
-        <p>© {new Date().getFullYear()} Thompson Footwear. All rights reserved.</p>
-      </footer>
     </div>
   );
 };
