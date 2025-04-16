@@ -11,7 +11,7 @@ const Admin = () => {
   }, []);
 
   return (
-    <div style={{ padding: '40px' }}>
+    <div style={{ padding: '40px',marginTop:'50px' }}>
       <h2>Admin Panel – All Orders</h2>
       {orders.length === 0 ? (
         <p>No orders found.</p>
