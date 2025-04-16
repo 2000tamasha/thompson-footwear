@@ -34,6 +34,7 @@ const ProductCard = ({ product }) => {
               marginTop: "20px",
               padding: "10px 20px",
               backgroundColor: "black",
+              fontFamily:'Poppins',
               color: "white",
               border: "none",
               cursor: "pointer"
