@@ -1,7 +1,10 @@
+/*reviewed by Thamasha Kodithuwakku 24351177*/
+
 .product-detail {
     display: flex;
     padding: 40px;
     gap: 40px;
+    margin-top: 80px;
     
   }
   
