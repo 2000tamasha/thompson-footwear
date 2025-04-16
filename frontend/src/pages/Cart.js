@@ -21,11 +21,11 @@ const Cart = () => {
   }, 0);
 
   return (
-    <div style={{ padding: "40px" ,marginTop:'50px' }}>
+    <div style={{ padding: "40px" ,marginTop:'50px', fontFamily:'Poppins' }}>
       <h2>Your Cart 🛍️</h2>
 
       {cartItems.length === 0 ? (
-        <p>Your cart is empty.</p>
+        <p style={{ fontFamily:'Poppins' }}>Your cart is empty.</p>
       ) : (
         <div>
           {cartItems.map((item, index) => (
@@ -40,6 +40,7 @@ const Cart = () => {
                 <button onClick={() => removeFromCart(index)} style={{
               marginTop: "20px",
               padding: "10px 20px",
+              fontFamily:'Poppins',
               backgroundColor: "#f44336",
               color: "white",
               border: "none",
@@ -56,6 +57,7 @@ const Cart = () => {
               marginTop: "20px",
               padding: "10px 20px",
               backgroundColor: "black",
+              fontFamily:'Poppins',
               color: "white",
               border: "none",
               cursor: "pointer"
