@@ -1,4 +1,4 @@
-// HomePage.js – Fully Updated by Sharan Adhikari 24071844
+// HomePage.js – Created by Sharan Adhikari 24071844 & Improved by Thamasha Kodithuwakku 24351177
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,13 +8,10 @@ const HomePage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
 
-  //  Contact form state
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [submitted, setSubmitted] = useState(false);
-
   const handleSearch = () => {
     const trimmed = searchTerm.trim().toLowerCase();
-    if (["men", "women", "children"].includes(trimmed)) {
+
+    if (['men', 'women', 'children'].includes(trimmed)) {
       navigate(`/products?category=${trimmed}`);
     } else if (trimmed) {
       navigate(`/products?search=${encodeURIComponent(trimmed)}`);
@@ -25,50 +22,49 @@ const HomePage = () => {
     if (e.key === 'Enter') handleSearch();
   };
 
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setFormData({ ...formData, [id]: value });
-  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await fetch('http://localhost:5000/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          full_name: formData.name,
-          email: formData.email,
-          message: formData.message,
-        }),
-      });
-      setSubmitted(true);
-      setFormData({ name: '', email: '', message: '' });
-    } catch (err) {
-      console.error('Error sending message:', err);
-      alert('Message sending failed. Please try again.');
-    }
-  };
+  const imageSources = [
+    "/images/slide1.png",
+    "/images/slide2.png",
+    "/images/slide3.png",
+  ];
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) =>
+        (prevIndex + 1) % imageSources.length
+      );
+    }, 5000); // change image every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
+
     <div className="homepage">
-      <div className="hero-image">
-        <img src="/images/thompson-banner.png" alt="Thompson Footwear Banner" />
+      <div className="hero-slideshow">
+        <img
+          src={imageSources[currentImageIndex]}
+          alt="Slideshow Banner"
+          className="slideshow-image"
+        />
+        <div className="hero-text-overlay">
+          <h1>Welcome to Thompson Footwear 👟</h1>
+          <p>Your one-stop shop for quality shoes for Men, Women, and Kids.</p>
+          <Link to="/products">
+            <button className="shop-now">Shop Now</button>
+          </Link>
+        </div>
       </div>
 
-      <div className="hero-text">
-        <h1>Welcome to Thompson Footwear 👟</h1>
-        <p>Your one-stop shop for quality shoes for Men, Women, and Kids.</p>
-        <Link to="/products">
-          <button className="shop-now">Shop Now</button>
-        </Link>
-      </div>
 
       {/* 🔍 Search Bar */}
       <div className="search-bar" style={{ textAlign: 'center', margin: '30px' }}>
         <input
           type="text"
-          placeholder="Search or type 'men', 'women', 'children'..."
+          placeholder="Search or type 'Men', 'Women', 'Children'..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -96,39 +92,87 @@ const HomePage = () => {
       </div>
 
       <div className="tagline">
-        <h2> Style That Moves With You</h2>
-        <p>Step into comfort, step into confidence. Shop Men, Women, and Kids shoes now.</p>
+        <h2>👟 Style That Moves With You</h2>
+        <p>
+          At Thompson Footwear, we believe the right pair of shoes can take you places.
+          Whether you're heading to work, the gym, or a weekend adventure, our styles are designed
+          for every step of your journey.
+        </p>
+        <p>
+          Discover our wide collection of comfortable, stylish footwear for Men, Women, and Kids —
+          because looking good should feel good too.
+        </p>
       </div>
 
       <div className="category-section">
         <h2>Shop by Category</h2>
         <div className="category-cards">
-          <button className="category-card men" onClick={() => navigate('/products?category=men')}>Men</button>
-          <button className="category-card women" onClick={() => navigate('/products?category=women')}>Women</button>
-          <button className="category-card kids" onClick={() => navigate('/products?category=children')}>Kids</button>
+          <div className="category-card men" onClick={() => navigate('/products?category=men')} style={{
+            backgroundImage: 'linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url(/images/maleCat.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+
+          }}>Men</div>
+          <div className="category-card women" onClick={() => navigate('/products?category=women')} style={{
+            backgroundImage: 'linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(/images/womenCat.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}>Women</div>
+          <div className="category-card kids" onClick={() => navigate('/products?category=children')} style={{
+            backgroundImage: 'linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)) ,url(/images/kidCat.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}>Kids</div>
         </div>
       </div>
 
       <div className="about-section">
         <h2>About Us</h2>
-        <p>
-          Thompson Footwear has been serving the local community for over a decade.
-          Our commitment to comfort, style, and value sets us apart from the rest.
-        </p>
-        <p>
-          Whether you're looking for trendy sneakers, durable boots, or classy formal shoes,
-          we have something for everyone. Now online and ready to serve all across Australia!
-        </p>
+        <div className="about-row">
+          <div className="about-image-box">
+            <img
+              src="/images/about.png"
+              alt="About Thompson Footwear"
+              className="about-image"
+            />
+          </div>
+          <div className="about-text">
+            <p>
+              Thompson Footwear has been serving the local community for over a decade.
+              Our commitment to comfort, style, and value sets us apart from the rest.
+            </p>
+            <p>
+              Whether you're looking for trendy sneakers, durable boots, or classy formal shoes,
+              we have something for everyone. Now online and ready to serve all across Australia!
+            </p>
+          </div>
+        </div>
       </div>
+
 
       <div className="testimonials">
         <h2>What Our Customers Say</h2>
         <div className="testimonial-list">
-          <blockquote>"Super comfy and stylish. I wear them every day!" – Amanda T.</blockquote>
-          <blockquote>"My kids love their new shoes. Great prices too!" – Jason M.</blockquote>
-          <blockquote>"Fast delivery and amazing customer service." – Priya S.</blockquote>
+          <div className="testimonial-card">
+            <img src="/images/cus1.png" alt="Amanda T." className="testimonial-img" />
+            <blockquote>"Super comfy and stylish. I wear them every day!"</blockquote>
+            <p>– Amanda T.</p>
+          </div>
+
+          <div className="testimonial-card">
+            <img src="/images/cus2.png" alt="Jason M." className="testimonial-img" />
+            <blockquote>"My kids love their new shoes. Great prices too!"</blockquote>
+            <p>– Jason M.</p>
+          </div>
+
+          <div className="testimonial-card">
+            <img src="/images/cus3.png" alt="Priya S." className="testimonial-img" />
+            <blockquote>"Fast delivery and amazing customer service."</blockquote>
+            <p>– Priya S.</p>
+          </div>
         </div>
       </div>
+
 
       <div className="why-us">
         <h2>Why Shop With Us?</h2>
@@ -166,52 +210,24 @@ const HomePage = () => {
       <div className="contact-form-section">
         <h2>Get in Touch</h2>
         <p>Have a question, feedback, or just want to say hi? Drop us a message!</p>
+        <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
+          <div className="form-group">
+            <label htmlFor="name">Full Name</label>
+            <input type="text" id="name" placeholder="Your name" required />
+          </div>
 
-        {submitted ? (
-          <p style={{ color: 'green', fontWeight: 'bold' }}>
-             Thanks for contacting us. We’ll get in touch soon!
-          </p>
-        ) : (
-          <form className="contact-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="name">Full Name</label>
-              <input
-                type="text"
-                id="name"
-                placeholder="Your name"
-                required
-                value={formData.name}
-                onChange={handleInputChange}
-              />
-            </div>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input type="email" id="email" placeholder="Your email" required />
+          </div>
 
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                placeholder="Your email"
-                required
-                value={formData.email}
-                onChange={handleInputChange}
-              />
-            </div>
+          <div className="form-group">
+            <label htmlFor="message">Message</label>
+            <textarea id="message" rows="4" placeholder="Your message" required></textarea>
+          </div>
 
-            <div className="form-group">
-              <label htmlFor="message">Message</label>
-              <textarea
-                id="message"
-                rows="4"
-                placeholder="Your message"
-                required
-                value={formData.message}
-                onChange={handleInputChange}
-              ></textarea>
-            </div>
-
-            <button type="submit">Send Message</button>
-          </form>
-        )}
+          <button type="submit">Send Message</button>
+        </form>
       </div>
 
       <footer className="footer">
