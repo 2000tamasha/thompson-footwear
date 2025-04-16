@@ -33,7 +33,7 @@ const CheckoutModal = ({ onClose }) => {
             onClose(); // close current modal
             window.dispatchEvent(new Event("openGuestCheckout")); // trigger guest modal
           }}
-          style={{ margin: "10px", padding: "10px 15px", backgroundColor: "black",
+          style={{ margin: "10px", padding: "10px 15px", backgroundColor: "black",fontFamily:'Poppins',
             color: "white",
             border: "none",
             cursor: "pointer" }}
@@ -43,7 +43,7 @@ const CheckoutModal = ({ onClose }) => {
 
         <button 
           onClick={() => navigate("/login")}
-          style={{ margin: "10px", padding: "10px 15px",backgroundColor: "black",
+          style={{ margin: "10px", padding: "10px 15px",backgroundColor: "black",fontFamily:'Poppins',
             color: "white",
             border: "none",
             cursor: "pointer" }}
@@ -54,7 +54,7 @@ const CheckoutModal = ({ onClose }) => {
         <br />
         <button 
           onClick={onClose}
-          style={{ marginTop: "20px", background: "none", color: "red", border: "none" }}
+          style={{ marginTop: "20px", background: "none", color: "red", border: "none",fontFamily:'Poppins' }}
         >
           Cancel
         </button>

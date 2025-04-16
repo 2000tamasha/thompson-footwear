@@ -156,6 +156,7 @@ const input = {
   padding: '10px',
   marginBottom: '10px',
   borderRadius: '4px',
+  fontFamily:'Poppins',
   border: '1px solid #ccc'
 };
 
@@ -163,6 +164,7 @@ const blackBtn = {
   background: 'black',
   color: 'white',
   padding: '12px 20px',
+  fontFamily:'Poppins',
   border: 'none',
   borderRadius: '4px',
   marginTop: '15px',
