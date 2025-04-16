@@ -1,4 +1,4 @@
-// Login.js – Nike-style Login with Sign Up Button by Sharan Adhikari
+// Login.js – Nike-style Login by Sharan Adhikari & reviewed by Thamasha Kodithuwakku 24351177
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -23,7 +23,7 @@ const Login = () => {
       boxShadow: '0 0 20px rgba(0,0,0,0.1)',
       fontFamily: 'sans-serif'
     }}>
-      <h2 style={{ marginBottom: '20px' }}>Enter your email to join us or sign in</h2>
+      <h2 style={{ marginBottom: '20px' }}>Enter your email to Sign In or Join Us</h2>
 
       <label>Email address</label>
       <input 
@@ -59,7 +59,7 @@ const Login = () => {
       </select>
 
       <p style={{ fontSize: '12px', marginBottom: '20px' }}>
-        By continuing, I agree to Nike's <a href="#" style={{ color: '#555' }}>Privacy Policy</a> and 
+        By continuing, I agree to Thompson Footwear's <a href="#" style={{ color: '#555' }}>Privacy Policy</a> and 
         <a href="#" style={{ color: '#555' }}> Terms of Use</a>.
       </p>
 
