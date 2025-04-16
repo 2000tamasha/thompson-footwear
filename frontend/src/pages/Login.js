@@ -17,6 +17,7 @@ const Login = () => {
     <div style={{
       maxWidth: '400px',
       margin: '80px auto',
+      marginTop:'150px',
       padding: '30px',
       background: '#fff',
       borderRadius: '8px',
