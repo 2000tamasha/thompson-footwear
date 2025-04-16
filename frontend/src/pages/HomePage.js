@@ -1,3 +1,5 @@
+// HomePage.js – Fully Updated by Sharan Adhikari 24071844
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './HomePage.css';
@@ -6,10 +8,13 @@ const HomePage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
 
+  //  Contact form state
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [submitted, setSubmitted] = useState(false);
+
   const handleSearch = () => {
     const trimmed = searchTerm.trim().toLowerCase();
-
-    if (['men', 'women', 'children'].includes(trimmed)) {
+    if (["men", "women", "children"].includes(trimmed)) {
       navigate(`/products?category=${trimmed}`);
     } else if (trimmed) {
       navigate(`/products?search=${encodeURIComponent(trimmed)}`);
@@ -18,6 +23,31 @@ const HomePage = () => {
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') handleSearch();
+  };
+
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await fetch('http://localhost:5000/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          full_name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }),
+      });
+      setSubmitted(true);
+      setFormData({ name: '', email: '', message: '' });
+    } catch (err) {
+      console.error('Error sending message:', err);
+      alert('Message sending failed. Please try again.');
+    }
   };
 
   return (
@@ -66,7 +96,7 @@ const HomePage = () => {
       </div>
 
       <div className="tagline">
-        <h2>👟 Style That Moves With You</h2>
+        <h2> Style That Moves With You</h2>
         <p>Step into comfort, step into confidence. Shop Men, Women, and Kids shoes now.</p>
       </div>
 
@@ -136,24 +166,52 @@ const HomePage = () => {
       <div className="contact-form-section">
         <h2>Get in Touch</h2>
         <p>Have a question, feedback, or just want to say hi? Drop us a message!</p>
-        <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
-          <div className="form-group">
-            <label htmlFor="name">Full Name</label>
-            <input type="text" id="name" placeholder="Your name" required />
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input type="email" id="email" placeholder="Your email" required />
-          </div>
+        {submitted ? (
+          <p style={{ color: 'green', fontWeight: 'bold' }}>
+             Thanks for contacting us. We’ll get in touch soon!
+          </p>
+        ) : (
+          <form className="contact-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="name">Full Name</label>
+              <input
+                type="text"
+                id="name"
+                placeholder="Your name"
+                required
+                value={formData.name}
+                onChange={handleInputChange}
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="message">Message</label>
-            <textarea id="message" rows="4" placeholder="Your message" required></textarea>
-          </div>
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                placeholder="Your email"
+                required
+                value={formData.email}
+                onChange={handleInputChange}
+              />
+            </div>
 
-          <button type="submit">Send Message</button>
-        </form>
+            <div className="form-group">
+              <label htmlFor="message">Message</label>
+              <textarea
+                id="message"
+                rows="4"
+                placeholder="Your message"
+                required
+                value={formData.message}
+                onChange={handleInputChange}
+              ></textarea>
+            </div>
+
+            <button type="submit">Send Message</button>
+          </form>
+        )}
       </div>
 
       <footer className="footer">

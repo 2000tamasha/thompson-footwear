@@ -1,19 +1,17 @@
-// App.js haran Adhikari 24071844
+/// App.js – Sharan Adhikari 24071844
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import HomePage from './pages/HomePage';       // Landing page
 import Home from './pages/Home';               // Product listing
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
-import Login from './pages/Login';             //  Now active
-import Register from './pages/Register';
-import Success from './pages/Success';
-// import Checkout from './pages/Checkout';
-// import Register from './pages/Register';
-// import AdminDashboard from './pages/AdminDashboard';
-import Navbar from './components/Navbar';
-// import Footer from './components/Footer';
+import Login from './pages/Login';             // Active login page
+import Register from './pages/Register';       // Active register page
+import Success from './pages/Success';         // After payment success
+import Admin from './pages/Admin';             // Admin panel
+import Navbar from './components/Navbar';      // Top navigation
 
 function App() {
   return (
@@ -25,14 +23,11 @@ function App() {
           <Route path="/products" element={<Home />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/login" element={<Login />} /> {/*  Login route */}
-          <Route path="/register" element={<Register />} /> 
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/success" element={<Success />} />
-          {/* <Route path="/checkout" element={<Checkout />} /> */}
-          {/* <Route path="/register" element={<Register />} /> */}
-          {/* <Route path="/admin" element={<AdminDashboard />} /> */}
+          <Route path="/admin" element={<Admin />} /> {/*  Admin route */}
         </Routes>
-        {/* <Footer /> */}
       </div>
     </Router>
   );

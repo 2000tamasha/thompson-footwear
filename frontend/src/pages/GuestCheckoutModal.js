@@ -1,3 +1,4 @@
+//  GuestCheckoutModal.js 
 import React, { useState } from 'react';
 import { useCart } from '../context/cartContext';
 import { loadStripe } from '@stripe/stripe-js';
@@ -60,8 +61,23 @@ const GuestCheckoutModal = ({ onClose }) => {
   };
 
   const handleStripeCheckout = async () => {
-    const stripe = await loadStripe('pk_test_123456789123456789123456');
+    const stripe = await loadStripe('pk_test_51RDfRhQmyo6fDX1pbbkVAIPWdD4V2680GmmKGYGnBaA6oM8YwwR5VmbVAXbXG4K0BIiHFp6kqIXjixtFQQOW9CHb00UKW7YphX');
 
+    //  Save order to backend first
+    await fetch('http://localhost:5000/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_email: form.email,
+        full_name: `${form.firstName} ${form.lastName}`,
+        address: form.address,
+        phone: form.phone,
+        items: cartItems,
+        total_amount: total
+      })
+    });
+
+    //  Then initiate Stripe session
     const response = await fetch('http://localhost:5000/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -69,7 +85,7 @@ const GuestCheckoutModal = ({ onClose }) => {
         items: cartItems.map(item => ({
           name: item.name,
           quantity: 1,
-          price: Math.round(parseFloat(item.price) * 100)
+          price: Math.round(parseFloat(item.price) * 100),
         }))
       })
     });
@@ -79,91 +95,42 @@ const GuestCheckoutModal = ({ onClose }) => {
   };
 
   return (
-    <div style={{
-      position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-      backgroundColor: 'rgba(0, 0, 0, 0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center',
-      zIndex: 999
-    }}>
-      <div style={{
-        position: 'relative',
-        width: '90%', maxWidth: '1000px', background: '#fff', borderRadius: '10px',
-        display: 'flex', overflow: 'hidden'
-      }}>
-        {/* ❌ Cancel Button */}
-        <button
-          onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '10px',
-            right: '20px',
-            fontSize: '18px',
-            background: 'none',
-            border: 'none',
-            color: 'red',
-            cursor: 'pointer'
-          }}
-        >
-          ❌
-        </button>
+    <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 999 }}>
+      <div style={{ position: 'relative', width: '90%', maxWidth: '1000px', background: '#fff', borderRadius: '10px', display: 'flex', overflow: 'hidden' }}>
+        <button onClick={onClose} style={{ position: 'absolute', top: '10px', right: '20px', fontSize: '18px', background: 'none', border: 'none', color: 'red', cursor: 'pointer' }}>❌</button>
 
-        {/* LEFT SIDE - Steps */}
+        {/* Left - Steps */}
         <div style={{ flex: 2, padding: '30px' }}>
           <h2>Checkout as Guest</h2>
+          {step === 1 && (<>
+            <input name="firstName" placeholder="First Name" onChange={handleInput} value={form.firstName} style={input} />
+            <input name="lastName" placeholder="Last Name" onChange={handleInput} value={form.lastName} style={input} />
+            <input name="address" placeholder="Start typing your address" onChange={handleInput} value={form.address} style={input} />
+            <input name="email" placeholder="Email" onChange={handleInput} value={form.email} style={input} />
+            <input name="phone" placeholder="Phone" onChange={handleInput} value={form.phone} style={input} />
+            <button onClick={nextStep} style={blackBtn}>Save & Continue</button>
+          </>)}
 
-          {/* Step 1 – Delivery */}
-          {step === 1 && (
-            <>
-              <input name="firstName" placeholder="First Name" onChange={handleInput} value={form.firstName} style={input} />
-              <input name="lastName" placeholder="Last Name" onChange={handleInput} value={form.lastName} style={input} />
-              <input name="address" placeholder="Start typing your address" onChange={handleInput} value={form.address} style={input} />
-              <p style={{ fontSize: '12px', margin: '5px 0 10px', cursor: 'pointer', color: '#0071e3' }}>
-                Type address manually
-              </p>
-              <input name="email" placeholder="Email Address" onChange={handleInput} value={form.email} style={input} />
-              <input name="phone" placeholder="Phone Number" onChange={handleInput} value={form.phone} style={input} />
-              <button onClick={nextStep} style={blackBtn}>Save & Continue</button>
-            </>
-          )}
+          {step === 2 && (<>
+            <input name="cardName" placeholder="Cardholder Name" onChange={handleInput} value={form.cardName} style={input} />
+            <input name="cardNumber" placeholder="Card Number" maxLength="16" onChange={handleInput} value={form.cardNumber} style={input} />
+            <input name="expiry" placeholder="Expiry Date (MM/YY)" onChange={handleInput} value={form.expiry} style={input} />
+            <input name="cvv" placeholder="CVV" maxLength="3" onChange={handleInput} value={form.cvv} style={input} />
+            <button onClick={nextStep} style={blackBtn}>Continue to Review</button>
+          </>)}
 
-          {/* Step 2 – Payment */}
-          {step === 2 && (
-            <>
-              <input name="cardName" placeholder="Cardholder Name" onChange={handleInput} value={form.cardName} style={input} />
-              <input name="cardNumber" placeholder="Card Number" maxLength="16" onChange={handleInput} value={form.cardNumber} style={input} />
-              <input name="expiry" placeholder="Expiry Date (MM/YY)" onChange={handleInput} value={form.expiry} style={input} />
-              <input name="cvv" placeholder="CVV" maxLength="3" onChange={handleInput} value={form.cvv} style={input} />
-              <button onClick={nextStep} style={blackBtn}>Continue to Review</button>
-            </>
-          )}
-
-          {/* Step 3 – Order Review */}
-          {step === 3 && (
-            <>
-              <div style={{ marginBottom: '20px' }}>
-                <h4>Delivery Information</h4>
-                <p><strong>Name:</strong> {form.firstName} {form.lastName}</p>
-                <p><strong>Address:</strong> {form.address}</p>
-                <p><strong>Email:</strong> {form.email}</p>
-                <p><strong>Phone:</strong> {form.phone}</p>
-              </div>
-              <div style={{ marginBottom: '20px' }}>
-                <h4>Payment Information</h4>
-                <p><strong>Cardholder:</strong> {form.cardName}</p>
-                <p><strong>Card:</strong> **** **** **** {form.cardNumber?.slice(-4)}</p>
-                <p><strong>Expiry:</strong> {form.expiry}</p>
-              </div>
-              <button onClick={handleStripeCheckout} style={blackBtn}>
-                Place Order & Pay with Card
-              </button>
-            </>
-          )}
+          {step === 3 && (<>
+            <h4>Review Order</h4>
+            <p><strong>Name:</strong> {form.firstName} {form.lastName}</p>
+            <p><strong>Address:</strong> {form.address}</p>
+            <p><strong>Email:</strong> {form.email}</p>
+            <p><strong>Phone:</strong> {form.phone}</p>
+            <button onClick={handleStripeCheckout} style={blackBtn}>Place Order & Pay</button>
+          </>)}
         </div>
 
-        {/* RIGHT SIDE - Cart Summary */}
-        <div style={{
-          flex: 1, backgroundColor: '#f7f7f7', padding: '30px', borderLeft: '1px solid #ddd',
-          display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
-        }}>
+        {/* Right - Cart Summary */}
+        <div style={{ flex: 1, backgroundColor: '#f7f7f7', padding: '30px', borderLeft: '1px solid #ddd', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <h3>In Your Bag</h3>
             <p>Subtotal: ${total.toFixed(2)}</p>
@@ -174,9 +141,6 @@ const GuestCheckoutModal = ({ onClose }) => {
             {cartItems.map((item, idx) => (
               <div key={idx} style={{ borderTop: '1px solid #ccc', paddingTop: '10px', marginTop: '10px' }}>
                 <p>{item.name}</p>
-                <p>Style #: {item.style_code || 'N/A'}</p>
-                <p>Size: {item.size || 'N/A'}</p>
-                <p>Colour: {item.color_variants || 'N/A'}</p>
                 <p>Qty: 1 @ ${parseFloat(item.price).toFixed(2)}</p>
               </div>
             ))}

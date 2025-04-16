@@ -9,20 +9,21 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
 
-  //  Add item to cart
   const addToCart = (product) => {
     setCartItems((prev) => [...prev, product]);
   };
 
-  //  Remove item from cart by index
   const removeFromCart = (index) => {
     setCartItems((prev) => prev.filter((_, i) => i !== index));
   };
+
+  const clearCart = () => setCartItems([]); // ✅ new function
 
   const value = {
     cartItems,
     addToCart,
     removeFromCart,
+    clearCart
   };
 
   return (
