@@ -1,0 +1,88 @@
+.account-container {
+  max-width: 600px;
+  margin: 100px auto;
+  padding: 20px;
+  font-family: Poppins, sans-serif;
+}
+
+.account-info {
+  margin-bottom: 30px;
+  background: #f4f4f4;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.account-info label {
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
+}
+
+.account-info input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.edit-btn, .logout-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: Poppins;
+}
+
+.edit-btn {
+  background-color: #2a9d8f;
+  color: white;
+}
+
+.logout-btn {
+  background-color: #e63946;
+  color: white;
+}
+
+.logout-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.modal-actions button {
+  margin: 10px;
+  padding: 12px 25px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.yes-btn {
+  background-color: #2a9d8f;
+  color: white;
+}
+
+.no-btn {
+  background-color: #aaa;
+  color: white;
+}

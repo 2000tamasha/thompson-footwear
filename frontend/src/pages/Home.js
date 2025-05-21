@@ -19,8 +19,8 @@ const Home = () => {
     const fetchProducts = async () => {
       try {
         const url = category
-          ? `http://localhost:5000/products?category=${category}`
-          : `http://localhost:5000/products`;
+          ? `http://localhost:5000/api/products?category=${category}`
+          : `http://localhost:5000/api/products`;
 
         const res = await axios.get(url);
         setProducts(res.data);

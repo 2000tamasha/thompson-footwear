@@ -1,16 +1,18 @@
-// sharan adhikari  24071844
-import React from 'react';
+// ProductCard.js – Updated by Sharan Adhikari 24071844
+
+import React, { useState } from 'react';
 import './ProductCard.css';
 import { useCart } from '../context/cartContext';
 import { useNavigate, Link } from 'react-router-dom';
+import Confetti from 'react-confetti';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
-  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
 
   const handleAddToCart = () => {
     addToCart(product);
-    navigate('/cart');
+    setShowModal(true); // show confirmation popup
   };
 
   return (
@@ -31,14 +33,27 @@ const ProductCard = ({ product }) => {
       <p className="stock">In Stock: {product.stock}</p>
 
       <button onClick={handleAddToCart} style={{
-              marginTop: "20px",
-              padding: "10px 20px",
-              backgroundColor: "black",
-              fontFamily:'Poppins',
-              color: "white",
-              border: "none",
-              cursor: "pointer"
-            }} >Add to Cart</button>
+        marginTop: "20px",
+        padding: "10px 20px",
+        backgroundColor: "black",
+        fontFamily: 'Poppins',
+        color: "white",
+        border: "none",
+        cursor: "pointer"
+      }}>Add to Cart</button>
+
+      {showModal && (
+        <>
+          <Confetti />
+          <div className="newsletter-modal">
+            <div className="newsletter-modal-content">
+              <h3>✅ Item Added to Cart!</h3>
+              <p>{product.name} has been added successfully.</p>
+              <button onClick={() => setShowModal(false)}>OK</button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

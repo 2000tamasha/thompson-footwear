@@ -19,12 +19,13 @@ app.use(bodyParser.json());
 const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const userRoutes = require('./routes/userRoutes');
-const contactRoutes = require('./routes/contactRoutes'); //  New contact route
+const contactRoutes = require('./routes/contactRoutes'); // New contact route
 
-app.use('/products', productRoutes);
-app.use('/orders', orderRoutes);
-app.use('/users', userRoutes);
-app.use('/contact', contactRoutes); // Register contact route
+//  Prefix all routes with /api
+app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/contact', contactRoutes);
 
 //  Stripe Checkout
 app.post('/create-checkout-session', async (req, res) => {

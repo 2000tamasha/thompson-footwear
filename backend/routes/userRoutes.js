@@ -2,25 +2,56 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 
-// Add new user or login existing
-router.post('/login', async (req, res) => {
+// SIGNUP – Create new user
+router.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    // Check if user exists
     const [existing] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
 
     if (existing.length > 0) {
-      // Just log in
-      return res.status(200).json({ message: 'Login successful', user: existing[0] });
+      return res.status(400).json({ message: 'User already exists. Please login.' });
     }
 
-    // Register new user
-    await db.query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [name, email, password]);
-    res.status(201).json({ message: 'User registered and logged in', user: { name, email } });
+    // Create new user, is_admin defaults to 0
+    await db.query(
+      'INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
+      [name, email, password]
+    );
+
+    res.status(201).json({ message: 'User registered successfully', user: { name, email, is_admin: 0 } });
   } catch (err) {
-    console.error('User login error:', err);
-    res.status(500).json({ error: 'Login failed' });
+    console.error('Signup error:', err.message);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// LOGIN – Check user credentials
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const [users] = await db.query(
+      'SELECT * FROM users WHERE email = ? AND password = ?',
+      [email, password]
+    );
+
+    if (users.length > 0) {
+      const user = users[0];
+      return res.status(200).json({
+        message: 'Login successful',
+        user: {
+          name: user.name,
+          email: user.email,
+          is_admin: user.is_admin //  Send is_admin to frontend
+        }
+      });
+    } else {
+      return res.status(401).json({ message: 'User not found. Please sign up.' });
+    }
+  } catch (err) {
+    console.error('Login error:', err.message);
+    res.status(500).json({ message: err.message });
   }
 });
 

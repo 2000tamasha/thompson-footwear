@@ -77,4 +77,32 @@
     line-height: 1.6;
     font-family: 'Poppins';
   }
+  .size-guide-link {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.qty-controls button {
+  padding: 5px 15px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.qty-controls span {
+  font-size: 16px;
+  min-width: 30px;
+  text-align: center;
+}
+
   

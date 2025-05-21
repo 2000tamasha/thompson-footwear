@@ -474,3 +474,36 @@
 .recent-searches li:hover {
   background-color: #ddd;
 }
+.newsletter-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.newsletter-modal-content {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
+
+.newsletter-modal-content button {
+  margin-top: 20px;
+  padding: 10px 25px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  background: #2a9d8f;
+  color: white;
+  cursor: pointer;
+}

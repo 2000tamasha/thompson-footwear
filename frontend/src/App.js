@@ -11,29 +11,38 @@ import Login from './pages/Login';             // Active login page
 import Register from './pages/Register';       // Active register page
 import Success from './pages/Success';         // After payment success
 import Admin from './pages/Admin';             // Admin panel
+import ForgotPassword from './pages/ForgotPassword';
+import Account from './pages/Account'; 
 import Navbar from './components/Navbar';      // Top navigation
-import Footer from './components/Footer'; //Footer
+import Footer from './components/Footer';      // Footer
 import './App.css';
+
+//  Import AuthProvider
+import { AuthProvider } from './context/authContext';
 
 function App() {
   return (
     <Router>
-      <div className="App">
-        <Navbar />
-        <div className="content">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/products" element={<Home />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/success" element={<Success />} />
-            <Route path="/admin" element={<Admin />} />
-          </Routes>
+      <AuthProvider> {/*  app in AuthProvider */}
+        <div className="App">
+          <Navbar />
+          <div className="content">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/products" element={<Home />} />
+              <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/success" element={<Success />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+               <Route path="/account" element={<Account />} /> 
+            </Routes>
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
+      </AuthProvider>
     </Router>
   );
 }

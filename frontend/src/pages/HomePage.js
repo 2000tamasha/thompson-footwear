@@ -1,16 +1,35 @@
-// HomePage.js – Created by Sharan Adhikari 24071844 & Improved by Thamasha Kodithuwakku 24351177
+// HomePage.js – Final Updated with Working Contact Form by Sharan Adhikari
 
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './HomePage.css';
+import Newsletter from '../components/Newsletter';
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showContactModal, setShowContactModal] = useState(false);
+
+
+  const [contact, setContact] = useState({
+    full_name: '',
+    email: '',
+    message: ''
+  });
+  const [contactSuccess, setContactSuccess] = useState('');
+  const [contactError, setContactError] = useState('');
+
+  useEffect(() => {
+    if (location.state?.welcomeName) {
+      alert(`Welcome, ${location.state.welcomeName}!`);
+    }
+  }, [location.state]);
 
   const handleSearch = () => {
     const trimmed = searchTerm.trim().toLowerCase();
-
     if (['men', 'women', 'children'].includes(trimmed)) {
       navigate(`/products?category=${trimmed}`);
     } else if (trimmed) {
@@ -22,27 +41,54 @@ const HomePage = () => {
     if (e.key === 'Enter') handleSearch();
   };
 
-
   const imageSources = [
     "/images/slide1.png",
     "/images/slide2.png",
     "/images/slide3.png",
   ];
 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  React.useEffect(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) =>
         (prevIndex + 1) % imageSources.length
       );
-    }, 5000); // change image every 5 seconds
-
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
-  return (
+  const handleContactChange = (e) => {
+    const { name, value } = e.target;
+    setContact(prev => ({ ...prev, [name]: value }));
+  };
 
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    setContactSuccess('');
+    setContactError('');
+
+    try {
+      const response = await fetch('http://localhost:5000/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(contact)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+  setContact({ full_name: '', email: '', message: '' });
+  setShowContactModal(true); // 🎉 show the modal}
+
+      } else {
+        setContactError(data.error || 'Something went wrong');
+      }
+    } catch (error) {
+      console.error("Contact form error:", error);
+      setContactError('Server error. Please try again later.');
+    }
+  };
+
+  return (
     <div className="homepage">
       <div className="hero-slideshow">
         <img
@@ -54,13 +100,11 @@ const HomePage = () => {
           <h1>Welcome to Thompson Footwear 👟</h1>
           <p>Your one-stop shop for quality shoes for Men, Women, and Kids.</p>
           <Link to="/products">
-            <button className="shop-now" style={{ fontFamily:'Poppins' }}>Shop Now</button>
+            <button className="shop-now" style={{ fontFamily: 'Poppins' }}>Shop Now</button>
           </Link>
         </div>
       </div>
 
-
-      {/* 🔍 Search Bar */}
       <div className="search-bar" style={{ textAlign: 'center', margin: '30px' }}>
         <input
           type="text"
@@ -73,7 +117,7 @@ const HomePage = () => {
             width: '300px',
             borderRadius: '6px',
             border: '1px solid #ccc',
-            fontFamily:'Poppins'
+            fontFamily: 'Poppins'
           }}
         />
         <button
@@ -84,7 +128,7 @@ const HomePage = () => {
             backgroundColor: '#000',
             color: '#fff',
             border: 'none',
-            fontFamily:'Poppins',
+            fontFamily: 'Poppins',
             borderRadius: '6px',
             cursor: 'pointer',
           }}
@@ -101,7 +145,7 @@ const HomePage = () => {
           for every step of your journey.
         </p>
         <p>
-          Discover our wide collection of comfortable, stylish footwear for Men, Women, and Kids —
+          Discover our wide collection of comfortable, stylish footwear for Men, Women, and Kids — 
           because looking good should feel good too.
         </p>
       </div>
@@ -113,7 +157,6 @@ const HomePage = () => {
             backgroundImage: 'linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),url(/images/maleCat.png)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-
           }}>Men</div>
           <div className="category-card women" onClick={() => navigate('/products?category=women')} style={{
             backgroundImage: 'linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(/images/womenCat.png)',
@@ -151,7 +194,6 @@ const HomePage = () => {
         </div>
       </div>
 
-
       <div className="testimonials">
         <h2>What Our Customers Say</h2>
         <div className="testimonial-list">
@@ -160,13 +202,11 @@ const HomePage = () => {
             <blockquote>"Super comfy and stylish. I wear them every day!"</blockquote>
             <p>– Amanda T.</p>
           </div>
-
           <div className="testimonial-card">
             <img src="/images/cus2.png" alt="Jason M." className="testimonial-img" />
             <blockquote>"My kids love their new shoes. Great prices too!"</blockquote>
             <p>– Jason M.</p>
           </div>
-
           <div className="testimonial-card">
             <img src="/images/cus3.png" alt="Priya S." className="testimonial-img" />
             <blockquote>"Fast delivery and amazing customer service."</blockquote>
@@ -174,7 +214,6 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-
 
       <div className="why-us">
         <h2>Why Shop With Us?</h2>
@@ -186,12 +225,7 @@ const HomePage = () => {
         </ul>
       </div>
 
-      <div className="newsletter">
-        <h2>Subscribe to Our Newsletter</h2>
-        <p>Get exclusive deals and 10% off your first order!</p>
-        <input type="email" placeholder="Your email address" style={{ fontFamily:'Poppins' }} />
-        <button style={{ fontFamily:'Poppins' }} >Subscribe</button>
-      </div>
+      <Newsletter />
 
       <div className="contact-map">
         <h2>Visit Our Store</h2>
@@ -212,26 +246,66 @@ const HomePage = () => {
       <div className="contact-form-section">
         <h2>Get in Touch</h2>
         <p>Have a question, feedback, or just want to say hi? Drop us a message!</p>
-        <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
+        <form className="contact-form" onSubmit={handleContactSubmit}>
           <div className="form-group">
             <label htmlFor="name">Full Name</label>
-            <input type="text" id="name" placeholder="Your name" style={{ fontFamily:'Poppins' }} required />
+            <input
+              type="text"
+              id="name"
+              name="full_name"
+              value={contact.full_name}
+              onChange={handleContactChange}
+              placeholder="Your name"
+              required
+            />
           </div>
+          {showContactModal && (
+  <div className="newsletter-modal">
+    <div className="newsletter-modal-content">
+      <h3> Message Sent Successfully!</h3>
+      <p>Your message has been sent successfully.<br />
+      Our team will get back to you as soon as possible.<br />
+      Thank you — have a good one!</p>
+      <button onClick={() => setShowContactModal(false)}>
+        OK
+      </button>
+    </div>
+  </div>
+)}
+
 
           <div className="form-group">
             <label htmlFor="email">Email</label>
-            <input type="email" id="email" placeholder="Your email" style={{ fontFamily:'Poppins' }} required />
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={contact.email}
+              onChange={handleContactChange}
+              placeholder="Your email"
+              required
+            />
           </div>
 
           <div className="form-group">
             <label htmlFor="message">Message</label>
-            <textarea id="message" rows="4" style={{ fontFamily:'Poppins' }} placeholder="Your message" required></textarea>
+            <textarea
+              id="message"
+              name="message"
+              rows="4"
+              value={contact.message}
+              onChange={handleContactChange}
+              placeholder="Your message"
+              required
+            ></textarea>
           </div>
 
-          <button type="submit" style={{ fontFamily:'Poppins' }}>Send Message</button>
+          {contactSuccess && <p style={{ color: 'green' }}>{contactSuccess}</p>}
+          {contactError && <p style={{ color: 'red' }}>{contactError}</p>}
+
+          <button type="submit" style={{ fontFamily: 'Poppins' }}>Send Message</button>
         </form>
       </div>
-
     </div>
   );
 };
