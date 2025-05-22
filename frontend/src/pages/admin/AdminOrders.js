@@ -1,6 +1,8 @@
+// AdminOrders.js – All Orders Panel
+
 import React, { useEffect, useState } from 'react';
 
-const Admin = () => {
+const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
@@ -11,15 +13,15 @@ const Admin = () => {
   }, []);
 
   return (
-    <div style={{ padding: '40px',marginTop:'50px',fontFamily:'Poppins' }}>
-      <h2>Admin Panel – All Orders</h2>
+    <div>
+      <h2>📦 All Orders</h2>
       {orders.length === 0 ? (
         <p>No orders found.</p>
       ) : (
         orders.map(order => (
           <div
             key={order.id}
-            style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '20px',fontFamily:'Poppins' }}
+            style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '20px' }}
           >
             <p><strong>Name:</strong> {order.full_name}</p>
             <p><strong>Email:</strong> {order.user_email}</p>
@@ -44,4 +46,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default AdminOrders;

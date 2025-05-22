@@ -54,5 +54,18 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+// GET all users – Admin view
+router.get('/', async (req, res) => {
+  try {
+    const [users] = await db.query(
+      'SELECT id, name, email, is_admin, created_at FROM users ORDER BY created_at DESC'
+    );
+    res.json(users);
+  } catch (err) {
+    console.error("Error fetching users:", err.message);
+    res.status(500).json({ message: 'Failed to load users' });
+  }
+});
+
 
 module.exports = router;

@@ -1,29 +1,33 @@
-/// App.js – Sharan Adhikari 24071844
+// App.js – Final Fix by Sharan Adhikari 24071844
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import HomePage from './pages/HomePage';       // Landing page
-import Home from './pages/Home';               // Product listing
+import HomePage from './pages/HomePage';
+import Home from './pages/Home';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
-import Login from './pages/Login';             // Active login page
-import Register from './pages/Register';       // Active register page
-import Success from './pages/Success';         // After payment success
-import Admin from './pages/Admin';             // Admin panel
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Success from './pages/Success';
 import ForgotPassword from './pages/ForgotPassword';
-import Account from './pages/Account'; 
-import Navbar from './components/Navbar';      // Top navigation
-import Footer from './components/Footer';      // Footer
+import Account from './pages/Account';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import AdminLayout from './pages/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminOrders from './pages/admin/AdminOrders';
+import AdminProducts from './pages/admin/AdminProducts';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminMessages from './pages/admin/AdminMessages';
 import './App.css';
 
-//  Import AuthProvider
 import { AuthProvider } from './context/authContext';
 
 function App() {
   return (
     <Router>
-      <AuthProvider> {/*  app in AuthProvider */}
+      <AuthProvider>
         <div className="App">
           <Navbar />
           <div className="content">
@@ -35,9 +39,16 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/success" element={<Success />} />
-              <Route path="/admin" element={<Admin />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
-               <Route path="/account" element={<Account />} /> 
+              <Route path="/account" element={<Account />} />
+
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="orders" element={<AdminOrders />} />
+                <Route path="products" element={<AdminProducts />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="messages" element={<AdminMessages />} />
+              </Route>
             </Routes>
           </div>
           <Footer />
