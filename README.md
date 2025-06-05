@@ -83,7 +83,7 @@ Developed using **React.js**, `react-router-dom`, and **Stripe.js**:
 
 ## 🚀 Deployment
 
-> Currently in **local development** phase. Final deployment will be done using **Heroku** for backend and **Netlify** or **Vercel** for frontend.
+> Currently in **local development** phase. Final deployment will be done using **Heroku** 
 
 ---
 
@@ -122,7 +122,7 @@ Please open an [Issue](https://github.com/yourusername/thompson-footwear/issues)
 |--------------------|------------------------|----------------------------------------|
 | Sharan Adhikari    | Backend & DB Developer(full stack) | s.adhikari.36@student.scu.edu.au       |
 | Thamasha Hakmana   | Frontend & UI/UX       | t.hakmana.kodithuwakkuge.10@student.scu.edu.au |
-| FM Zayan Ahamed    | | z.fasal.mohamed.10@student.scu.edu.au  |
+| FM Zayan Ahamed    |QA testing | z.fasal.mohamed.10@student.scu.edu.au  |
 
 ---
 
