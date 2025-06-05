@@ -1,11 +1,8 @@
-// CheckoutModal.js – Updated by Sharan Adhikari
+// CheckoutModal.js – Updated by Sharan Adhikari to support unified checkout with checkout flag
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
-const CheckoutModal = ({ onClose }) => {
-  const navigate = useNavigate();
-
+const CheckoutModal = ({ onClose, user }) => {
   return (
     <div style={{
       position: 'fixed',
@@ -27,26 +24,27 @@ const CheckoutModal = ({ onClose }) => {
       }}>
         <h3>How would you like to checkout?</h3>
 
-        {/*  Updated guest checkout to open the guest modal */}
+        {/* Unified guest & user logic trigger */}
         <button 
           onClick={() => {
-            onClose(); // close current modal
-            window.dispatchEvent(new Event("openGuestCheckout")); // trigger guest modal
+            onClose();
+            window.dispatchEvent(new Event("openGuestCheckout"));
           }}
-          style={{ margin: "10px", padding: "10px 15px", backgroundColor: "black",fontFamily:'Poppins',
-            color: "white",
-            border: "none",
-            cursor: "pointer" }}
+          style={{ margin: "10px", padding: "10px 15px", backgroundColor: "black", fontFamily: 'Poppins', color: "white", border: "none", cursor: "pointer" }}
         >
           Checkout as Guest
         </button>
 
         <button 
-          onClick={() => navigate("/login")}
-          style={{ margin: "10px", padding: "10px 15px",backgroundColor: "black",fontFamily:'Poppins',
-            color: "white",
-            border: "none",
-            cursor: "pointer" }}
+          onClick={() => {
+            onClose();
+            if (user) {
+              window.dispatchEvent(new Event("openUserCheckout"));
+            } else {
+              window.location.href = "/login?checkout=1"; 
+            }
+          }}
+          style={{ margin: "10px", padding: "10px 15px", backgroundColor: "black", fontFamily: 'Poppins', color: "white", border: "none", cursor: "pointer" }}
         >
           Sign In & Checkout
         </button>
@@ -54,7 +52,7 @@ const CheckoutModal = ({ onClose }) => {
         <br />
         <button 
           onClick={onClose}
-          style={{ marginTop: "20px", background: "none", color: "red", border: "none",fontFamily:'Poppins' }}
+          style={{ marginTop: "20px", background: "none", color: "red", border: "none", fontFamily: 'Poppins' }}
         >
           Cancel
         </button>

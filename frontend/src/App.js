@@ -20,6 +20,7 @@ import AdminOrders from './pages/admin/AdminOrders';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminMessages from './pages/admin/AdminMessages';
+import SignedInCheckout from './pages/SignedInCheckout';
 import './App.css';
 
 import { AuthProvider } from './context/authContext';
@@ -32,6 +33,7 @@ function App() {
           <Navbar />
           <div className="content">
             <Routes>
+              {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
               <Route path="/products" element={<Home />} />
               <Route path="/product/:id" element={<ProductDetail />} />
@@ -41,7 +43,9 @@ function App() {
               <Route path="/success" element={<Success />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/account" element={<Account />} />
+              <Route path="/checkout" element={<SignedInCheckout />} /> 
 
+              {/* Admin Routes */}
               <Route path="/admin" element={<AdminLayout />}>
                 <Route path="dashboard" element={<AdminDashboard />} />
                 <Route path="orders" element={<AdminOrders />} />

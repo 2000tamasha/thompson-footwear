@@ -1,7 +1,7 @@
-// Login.js – with Welcome Modal and Confetti by Sharan Adhikari
+// Login.js – Final version with conditional redirects by Sharan Adhikari
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 import { loginUser } from '../services/authService';
 import Confetti from 'react-confetti';
@@ -15,6 +15,8 @@ const Login = () => {
   const [showWelcome, setShowWelcome] = useState(false);
   const { setUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isCheckoutFlow = new URLSearchParams(location.search).get('checkout') === '1';
   const [userName, setUserName] = useState('');
 
   const handleLogin = async () => {
@@ -26,9 +28,18 @@ const Login = () => {
     try {
       const data = await loginUser(email, password);
       setUser(data.user);
-      setUserName(data.user.name); // capture for welcome
+      setUserName(data.user.name);
       localStorage.setItem('user', JSON.stringify(data.user));
-      setShowWelcome(true); // trigger welcome modal
+
+      const isAdmin = data.user?.role === 'admin' || data.user?.email === 'admin@example.com';
+
+      if (isAdmin) {
+        navigate('/admin/dashboard');
+      } else if (isCheckoutFlow) {
+        navigate('/checkout');
+      } else {
+        setShowWelcome(true);
+      }
     } catch (err) {
       alert("Login failed: " + err.message);
     }

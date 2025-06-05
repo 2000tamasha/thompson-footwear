@@ -1,20 +1,32 @@
-// Cart.js – Enhanced by Sharan Adhikari 24071844
+// Cart.js – Updated to skip modal for signed-in users by Sharan Adhikari 24071844
 
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/cartContext';
+import { useAuth } from '../context/authContext';
+import { useNavigate } from 'react-router-dom';
 import CheckoutModal from './CheckoutModal';
 import GuestCheckoutModal from './GuestCheckoutModal';
 
 const Cart = () => {
   const { cartItems, removeFromCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   const [showModal, setShowModal] = useState(false);
   const [showGuestModal, setShowGuestModal] = useState(false);
   const [quantities, setQuantities] = useState(cartItems.map(() => 1));
 
   useEffect(() => {
     const handleOpenGuest = () => setShowGuestModal(true);
+    const handleOpenUser = () => setShowModal(true);
+
     window.addEventListener('openGuestCheckout', handleOpenGuest);
-    return () => window.removeEventListener('openGuestCheckout', handleOpenGuest);
+    window.addEventListener('openUserCheckout', handleOpenUser);
+
+    return () => {
+      window.removeEventListener('openGuestCheckout', handleOpenGuest);
+      window.removeEventListener('openUserCheckout', handleOpenUser);
+    };
   }, []);
 
   const handleQuantityChange = (index, delta) => {
@@ -32,7 +44,7 @@ const Cart = () => {
 
   return (
     <div style={{ padding: "40px", marginTop: '50px', fontFamily: 'Poppins' }}>
-      <h2>Your Cart 🛍️</h2>
+      <h2>Your Cart 🏍️</h2>
 
       {cartItems.length === 0 ? (
         <p>Your cart is empty.</p>
@@ -74,7 +86,13 @@ const Cart = () => {
           <h3>Total: ${total.toFixed(2)}</h3>
 
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              if (user) {
+                navigate('/checkout'); //  Redirect signed-in users directly
+              } else {
+                setShowModal(true); //  Only show modal for guests
+              }
+            }}
             style={{
               marginTop: "20px",
               padding: "10px 20px",
@@ -90,7 +108,7 @@ const Cart = () => {
         </div>
       )}
 
-      {showModal && <CheckoutModal onClose={() => setShowModal(false)} />}
+      {showModal && <CheckoutModal onClose={() => setShowModal(false)} user={user} />}
       {showGuestModal && <GuestCheckoutModal onClose={() => setShowGuestModal(false)} />}
     </div>
   );
