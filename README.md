@@ -1,46 +1,130 @@
-# 👟 Thompson Footwear – E-Commerce Platform (Sprint 1)
+# 👟 Thompson Footwear – E-Commerce Platform
 
-Welcome to the official repository for **Thompson Footwear**, a modern full-stack e-commerce application designed to sell shoes for Men, Women, and Kids.
-
-This repository is for **Sprint 1**, which focuses on setting up the core backend, frontend structure, database connection, Stripe payment, and basic admin functionality.
+Welcome to the official repository for **Thompson Footwear**, a full-stack e-commerce website built for a local shoe retailer aiming to sell footwear for **Men**, **Women**, and **Kids**. This project is part of a university team assignment and currently represents **Sprint 1** of our Agile development process.
 
 ---
 
-## ✅ Features Completed in Sprint 1
+## ✅ Sprint 1 Deliverables (Completed)
 
-### 🔧 Backend API (Node.js + Express)
-- Connected to MySQL database using `mysql2`
-- Created routes:
-  - `/products` – fetch all products
-  - `/orders` – save orders from checkout
-  - `/users` – login and signup functionality
-  - `/contact` – save user contact messages
-- Stripe Checkout integration
-- Stripe Webhook to handle `checkout.session.completed` events
+### 🔧 Backend API (Node.js + Express + MySQL)
 
-### 🗃️ Database Setup (MySQL)
-- Tables created:
-  - `products`
-  - `users`
-  - `orders`
-  - `contact_messages`
-- Orders and messages are saved via form or checkout
+- ✅ Connected to MySQL using `mysql2`
+- ✅ RESTful API endpoints:
+  - `GET /api/products` – Fetch all products
+  - `GET /api/products/:id` – Fetch single product by ID
+  - `POST /api/orders` – Save order details after checkout
+  - `POST /api/users/login` – User login
+  - `POST /api/users/register` – User signup
+  - `POST /api/contact` – Save contact form messages
+- ✅ Stripe Checkout integration (with test keys)
+- ✅ Webhook to handle `checkout.session.completed` events
 
-### 🖥️ Frontend (React.js)
-- React pages for:
-  - `HomePage.js` – landing page + contact form
-  - `Home.js` – product listing
-  - `ProductDetail.js` – detailed product view
-  - `Cart.js` – shopping cart and checkout flow
-  - `Login.js` / `Register.js` – user auth flow
-  - `Success.js` – payment confirmation
-  - `Admin.js` – admin dashboard (orders/messages)
-- Guest Checkout with full Stripe payment integration
-- Contact form that sends data to backend and stores in DB
+### 🗃️ Database Schema (MySQL)
+
+- **products**
+- **users**
+- **orders**
+- **contact_messages**
+
+💾 All data is persisted securely via SQL queries from backend API.
+
+---
+
+## 🖥️ Frontend (React.js)
+
+Developed using **React.js**, `react-router-dom`, and **Stripe.js**:
+
+- `HomePage.js` – Store banner, brand intro, and contact form
+- `Home.js` – Product grid display
+- `ProductDetail.js` – Individual product view with size/quantity
+- `Cart.js` – Shopping cart with quantity updates
+- `Login.js` & `Register.js` – User authentication forms
+- `Success.js` – Stripe success page
+- `AdminLayout.js` – Admin dashboard layout
+- Admin Pages:
+  - `AdminDashboard.js` – Admin home
+  - `AdminOrders.js` – View all orders
+  - `AdminUsers.js` – View registered users
+  - `AdminMessages.js` – View submitted contact messages
+
+### 💳 Checkout Flow
+
+- Guest Checkout (3 steps: Delivery → Payment → Review)
+- Logged-in User Checkout (3 steps with prefilled data)
+- Payment Methods:
+  - Stripe Card Payment
+  - PayPal ID (simulated)
+  - Afterpay (simulated)
+- Orders stored in database
+- Confirmation message and redirect to `/success`
 
 ---
 
 ## 📁 Folder Structure
 
-/frontend /src /pages /components App.js ... /backend /routes productRoutes.js userRoutes.js orderRoutes.js contactRoutes.js server.js .env (ignored in Git)
+📦 thompson-footwear
+├── frontend
+│ └── src
+│ ├── pages
+│ ├── components
+│ └── App.js
+├── backend
+│ ├── routes
+│ │ ├── productRoutes.js
+│ │ ├── userRoutes.js
+│ │ ├── orderRoutes.js
+│ │ └── contactRoutes.js
+│ └── server.js
+├── .env (ignored in Git)
+└── README.md
+
+
+---
+
+## 🚀 Deployment
+
+> Currently in **local development** phase. Final deployment will be done using **Heroku** for backend and **Netlify** or **Vercel** for frontend.
+
+---
+
+## 🛠️ Technologies Used
+
+- **Frontend:** React, React Router, Stripe.js
+- **Backend:** Node.js, Express
+- **Database:** MySQL (using `mysql2`)
+- **Authentication:** JWT (planned for future iteration)
+- **Payment Gateway:** Stripe
+- **Dev Tools:** Postman, ESLint, concurrently
+
+---
+
+## 📬 Contact & Feedback
+
+> 💡 Want to contribute ideas or report bugs?
+Please open an [Issue](https://github.com/yourusername/thompson-footwear/issues) or submit a Pull Request.
+
+---
+
+## 📅 What's Next (Sprint 2 Plans)
+
+- [ ] Complete JWT-based authentication
+- [ ] Enable product CRUD from Admin
+- [ ] Upload product images via admin panel
+- [ ] Enable mobile responsiveness
+- [ ] Apply accessibility improvements
+- [ ] Add automated email confirmation on order
+
+---
+
+## 👨‍💻 Team Members
+
+| Name               | Role                   | Email                                  |
+|--------------------|------------------------|----------------------------------------|
+| Sharan Adhikari    | Backend & DB Developer(full stack) | s.adhikari.36@student.scu.edu.au       |
+| Thamasha Hakmana   | Frontend & UI/UX       | t.hakmana.kodithuwakkuge.10@student.scu.edu.au |
+| FM Zayan Ahamed    | | z.fasal.mohamed.10@student.scu.edu.au  |
+
+---
+
+> ⭐ Star this repo to support our journey!
 
