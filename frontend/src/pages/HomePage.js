@@ -1,9 +1,14 @@
-// HomePage.js – Final Updated with Working Contact Form by Sharan Adhikari
+// HomePage.js – Final Update
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './HomePage.css';
 import Newsletter from '../components/Newsletter';
+import { TypeAnimation } from 'react-type-animation';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+
+
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -27,6 +32,11 @@ const HomePage = () => {
       alert(`Welcome, ${location.state.welcomeName}!`);
     }
   }, [location.state]);
+
+  useEffect(() => {
+  AOS.init({ duration: 1000 });
+}, []);
+
 
   const handleSearch = () => {
     const trimmed = searchTerm.trim().toLowerCase();
@@ -76,8 +86,8 @@ const HomePage = () => {
       const data = await response.json();
 
       if (response.ok) {
-  setContact({ full_name: '', email: '', message: '' });
-  setShowContactModal(true); // 🎉 show the modal}
+        setContact({ full_name: '', email: '', message: '' });
+        setShowContactModal(true); // 🎉 show the modal}
 
       } else {
         setContactError(data.error || 'Something went wrong');
@@ -96,7 +106,7 @@ const HomePage = () => {
           alt="Slideshow Banner"
           className="slideshow-image"
         />
-        <div className="hero-text-overlay">
+        <div className="hero-text-overlay" >
           <h1>Welcome to Thompson Footwear 👟</h1>
           <p>Your one-stop shop for quality shoes for Men, Women, and Kids.</p>
           <Link to="/products">
@@ -105,39 +115,29 @@ const HomePage = () => {
         </div>
       </div>
 
-      <div className="search-bar" style={{ textAlign: 'center', margin: '30px' }}>
-        <input
-          type="text"
-          placeholder="Search or type 'Men', 'Women', 'Children'..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyDown={handleKeyDown}
+
+      <div className="promo-banner">
+        <TypeAnimation
+          sequence={[
+            '🔥 End of Season Sale – Up to 40% Off!',
+          ]}
+          wrapper="p"
+          cursor={true}
+          speed={50}
           style={{
-            padding: '10px',
-            width: '300px',
-            borderRadius: '6px',
-            border: '1px solid #ccc',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            color: 'white',
+            textAlign: 'center',
             fontFamily: 'Poppins'
           }}
+          repeat={0} // Only types once
         />
-        <button
-          onClick={handleSearch}
-          style={{
-            padding: '10px 15px',
-            marginLeft: '10px',
-            backgroundColor: '#000',
-            color: '#fff',
-            border: 'none',
-            fontFamily: 'Poppins',
-            borderRadius: '6px',
-            cursor: 'pointer',
-          }}
-        >
-          Search
-        </button>
       </div>
 
-      <div className="tagline">
+
+
+      <div className="tagline" data-aos="fade-up">
         <h2>👟 Style That Moves With You</h2>
         <p>
           At Thompson Footwear, we believe the right pair of shoes can take you places.
@@ -145,12 +145,12 @@ const HomePage = () => {
           for every step of your journey.
         </p>
         <p>
-          Discover our wide collection of comfortable, stylish footwear for Men, Women, and Kids — 
+          Discover our wide collection of comfortable, stylish footwear for Men, Women, and Kids —
           because looking good should feel good too.
         </p>
       </div>
 
-      <div className="category-section">
+      <div className="category-section" data-aos="fade-up">
         <h2>Shop by Category</h2>
         <div className="category-cards">
           <div className="category-card men" onClick={() => navigate('/products?category=men')} style={{
@@ -171,30 +171,73 @@ const HomePage = () => {
         </div>
       </div>
 
-      <div className="about-section">
-        <h2>About Us</h2>
-        <div className="about-row">
-          <div className="about-image-box">
-            <img
-              src="/images/about.png"
-              alt="About Thompson Footwear"
-              className="about-image"
-            />
+      <div className="trending-section" data-aos="fade-up">
+        <h2>🔥 Trending Products</h2>
+        <div className="trending-cards">
+          <div className="trending-card">
+            <img src="/images/men2.jpg" alt="Trending Shoe 1" />
+            <h4>Men Air Max Runner</h4>
+            <p>$79.99</p>
+            <Link to="http://localhost:3000/product/2">
+              <button>Shop Now</button>
+            </Link>
           </div>
-          <div className="about-text">
-            <p>
-              Thompson Footwear has been serving the local community for over a decade.
-              Our commitment to comfort, style, and value sets us apart from the rest.
-            </p>
-            <p>
-              Whether you're looking for trendy sneakers, durable boots, or classy formal shoes,
-              we have something for everyone. Now online and ready to serve all across Australia!
-            </p>
+          <div className="trending-card">
+            <img src="/images/men3.jpg" alt="Trending Shoe 2" />
+            <h4>Men Leather Loafers</h4>
+            <p>$89.99</p>
+            <Link to="http://localhost:3000/product/3">
+              <button>Shop Now</button>
+            </Link>
+          </div>
+          <div className="trending-card">
+            <img src="/images/women4.jpg" alt="Trending Shoe 2" />
+            <h4>Women Canvas Sneakers</h4>
+            <p>$54.99</p>
+            <Link to="http://localhost:3000/product/14">
+              <button>Shop Now</button>
+            </Link>
+          </div>
+          <div className="trending-card">
+            <img src="/images/women9.jpg" alt="Trending Shoe 2" />
+            <h4>Women Waterproof Sneakers</h4>
+            <p>$74.99</p>
+            <Link to="http://localhost:3000/product/19">
+              <button>Shop Now</button>
+            </Link>
+          </div>
+          
+          <div className="trending-card">
+            <img src="/images/kids1.jpg" alt="Trending Shoe 3" />
+            <h4>Kids Light-Up sneakers</h4>
+            <p>$39.99</p>
+            <Link to="http://localhost:3000/product/21">
+              <button>Shop Now</button>
+            </Link>
           </div>
         </div>
       </div>
 
-      <div className="testimonials">
+
+  <div className="about-banner-section" data-aos="fade-up">
+  <img src="/images/about.jpg" alt="About Us Banner" className="about-banner-img" />
+  <div className="about-banner-text">
+    <h2>About Us</h2>
+    <p>
+      Thompson Footwear has been serving the local community for over a decade.
+      Our commitment to comfort, style, and value sets us apart from the rest.
+    </p>
+    <p>
+      Whether you're looking for trendy sneakers, durable boots, or classy formal shoes —
+      we have something for everyone. Now online and ready to serve all across Australia!
+    </p>
+  </div>
+</div>
+
+
+
+
+      <div className="testimonials" data-aos="fade-up">
         <h2>What Our Customers Say</h2>
         <div className="testimonial-list">
           <div className="testimonial-card">
@@ -212,10 +255,20 @@ const HomePage = () => {
             <blockquote>"Fast delivery and amazing customer service."</blockquote>
             <p>– Priya S.</p>
           </div>
+          <div className="testimonial-card">
+            <img src="/images/cus4.png" alt="Shauna C." className="testimonial-img" />
+            <blockquote>"Very fashionable and go with almost any outfit!."</blockquote>
+            <p>– Shauna C.</p>
+          </div>
+          <div className="testimonial-card">
+            <img src="/images/cus5.png" alt="Eddie P." className="testimonial-img" />
+            <blockquote>""Sturdy build and perfect grip. Ideal for hiking or rough terrain."</blockquote>
+            <p>– Eddie P.</p>
+          </div>
         </div>
       </div>
 
-      <div className="why-us">
+      <div className="why-us" data-aos="fade-up">
         <h2>Why Shop With Us?</h2>
         <ul>
           <li>✔️ Free Shipping over $50</li>
@@ -260,18 +313,18 @@ const HomePage = () => {
             />
           </div>
           {showContactModal && (
-  <div className="newsletter-modal">
-    <div className="newsletter-modal-content">
-      <h3> Message Sent Successfully!</h3>
-      <p>Your message has been sent successfully.<br />
-      Our team will get back to you as soon as possible.<br />
-      Thank you — have a good one!</p>
-      <button onClick={() => setShowContactModal(false)}>
-        OK
-      </button>
-    </div>
-  </div>
-)}
+            <div className="newsletter-modal">
+              <div className="newsletter-modal-content">
+                <h3> Message Sent Successfully!</h3>
+                <p>Your message has been sent successfully.<br />
+                  Our team will get back to you as soon as possible.<br />
+                  Thank you — have a good one!</p>
+                <button onClick={() => setShowContactModal(false)}>
+                  OK
+                </button>
+              </div>
+            </div>
+          )}
 
 
           <div className="form-group">
@@ -311,3 +364,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
