@@ -1,4 +1,4 @@
-// GuestCheckoutModal.js – Enhanced Confirmation
+// GuestCheckoutModal.js – Enhanced Confirmation by sharan adhikari
 
 import React, { useState } from 'react';
 import { useCart } from '../context/cartContext';
@@ -52,7 +52,7 @@ const GuestCheckoutModal = ({ onClose }) => {
   const handleStripeCheckout = async () => {
     setShowMessage(true);
     try {
-      await fetch('http://localhost:5000/orders', {
+      await fetch('http://localhost:5000/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

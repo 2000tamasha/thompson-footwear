@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../context/cartContext';
 
 const Success = () => {
+  const { clearCart } = useCart();
+
+  useEffect(() => {
+    // Clear cart both from state and localStorage on successful checkout
+    clearCart();
+  }, []);
+
   return (
     <div style={{
       textAlign: 'center',

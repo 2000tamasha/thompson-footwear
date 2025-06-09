@@ -6,7 +6,7 @@ const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/orders')
+    fetch('http://localhost:5000/api/orders')
       .then(res => res.json())
       .then(data => setOrders(data))
       .catch(err => console.error('Error loading orders:', err));

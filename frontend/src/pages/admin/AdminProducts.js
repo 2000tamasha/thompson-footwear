@@ -1,4 +1,4 @@
-// AdminProducts.js – Admin Product Table UI by Sharan Adhikari 24071844
+// AdminProducts.js – Fully Updated by Sharan Adhikari 24071844
 
 import React, { useEffect, useState } from 'react';
 
@@ -48,14 +48,24 @@ const AdminProducts = () => {
       : 'http://localhost:5000/api/products';
     const method = isEditing ? 'PUT' : 'POST';
 
-    await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
-    });
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      });
 
-    setShowModal(false);
-    fetchProducts();
+      const result = await res.json();
+      console.log("API response:", result);
+
+      if (!res.ok) throw new Error(result?.error || 'Failed to save product');
+
+      setShowModal(false);
+      fetchProducts();
+    } catch (err) {
+      console.error("Add/Edit failed:", err.message);
+      alert("Error saving product. Check console.");
+    }
   };
 
   return (
@@ -104,6 +114,9 @@ const AdminProducts = () => {
               <input name="description" placeholder="Description" value={form.description || ''} onChange={handleChange} /><br />
               <input name="style_code" placeholder="Style Code" value={form.style_code || ''} onChange={handleChange} /><br />
               <input name="color_variants" placeholder="Color Variants" value={form.color_variants || ''} onChange={handleChange} /><br />
+              <input name="size_us" placeholder="Size US" value={form.size_us || ''} onChange={handleChange} /><br />
+              <input name="size_uk" placeholder="Size UK" value={form.size_uk || ''} onChange={handleChange} /><br />
+              <input name="size_eu" placeholder="Size EU" value={form.size_eu || ''} onChange={handleChange} /><br />
               <textarea name="long_description" placeholder="Long Description" value={form.long_description || ''} onChange={handleChange} /><br />
               <button type="submit">{isEditing ? "Update" : "Add"}</button>
               <button onClick={() => setShowModal(false)} type="button">Cancel</button>
