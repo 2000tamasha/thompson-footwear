@@ -24,7 +24,11 @@ export const CartProvider = ({ children }) => {
     setCartItems((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const clearCart = () => setCartItems([]); // ✅ new function
+  const clearCart = () => {
+  setCartItems([]);
+  localStorage.removeItem("thompsonCart"); //  clears stored cart too
+};
+
 
   const value = {
     cartItems,
