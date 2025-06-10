@@ -1,5 +1,3 @@
-// ProductDetail.js – Enhanced with Favourites by Sharan Adhikari 24071844
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './ProductDetail.css';
@@ -22,6 +20,13 @@ const ProductDetail = () => {
   const [showAddedModal, setShowAddedModal] = useState(false);
   const [showFavModal, setShowFavModal] = useState(false);
   const { addToCart } = useCart();
+  const [showReviewSuccess, setShowReviewSuccess] = useState(false);
+
+
+  const [reviews, setReviews] = useState([]);
+  const [average, setAverage] = useState(0);
+  const [reviewText, setReviewText] = useState('');
+  const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
     axios.get(`http://localhost:5000/api/products/${id}`)
@@ -31,6 +36,44 @@ const ProductDetail = () => {
         setProduct({});
       });
   }, [id]);
+
+  useEffect(() => {
+    axios.get(`http://localhost:5000/api/reviews/${id}`).then(res => setReviews(res.data));
+    axios.get(`http://localhost:5000/api/reviews/${id}/average`).then(res => setAverage(res.data.average || 0));
+  }, [id]);
+
+  const handleSubmitReview = async (e) => {
+  e.preventDefault();
+
+  if (!userEmail || !reviewText) {
+    alert('❌ Please enter your email and comment.');
+    return;
+  }
+
+  try {
+    await axios.post(`http://localhost:5000/api/reviews/${id}`, {
+      user_email: userEmail,
+      rating: 5, // Optional default
+      review_text: reviewText
+    });
+
+    setUserEmail('');
+    setReviewText('');
+
+    //  Show custom success modal
+    setShowReviewSuccess(true);
+    setTimeout(() => setShowReviewSuccess(false), 3000); // auto-hide after 3s
+
+    const resReviews = await axios.get(`http://localhost:5000/api/reviews/${id}`);
+    const resAvg = await axios.get(`http://localhost:5000/api/reviews/${id}/average`);
+    setReviews(resReviews.data);
+    setAverage(resAvg.data.average || 0);
+  } catch (err) {
+    console.error('Review submission failed:', err);
+    alert('❌ Failed to submit review. Please try again.');
+  }
+};
+
 
   const handleAddToCart = () => {
     if (!selectedSize) return;
@@ -104,11 +147,7 @@ const ProductDetail = () => {
           </div>
         </div>
 
-        <button
-          className="add-to-cart"
-          onClick={handleAddToCart}
-          disabled={!selectedSize}
-        >
+        <button className="add-to-cart" onClick={handleAddToCart} disabled={!selectedSize}>
           Add to Bag
         </button>
         <button className="fav-btn" onClick={handleAddToFavourites}>
@@ -122,9 +161,7 @@ const ProductDetail = () => {
 
         <div className="description">
           <p>{product.long_description}</p>
-          {product.style_code && (
-            <p><strong>Style Code:</strong> {product.style_code}</p>
-          )}
+          {product.style_code && <p><strong>Style Code:</strong> {product.style_code}</p>}
         </div>
       </div>
 
@@ -166,6 +203,91 @@ const ProductDetail = () => {
           </div>
         </div>
       )}
+
+      {/* --- Ratings and Reviews Section --- */}
+      <div className="reviews-container">
+        <h2 className="reviews-header">💬 Customer Reviews</h2>
+
+        <div className="leave-review-section">
+          <h4>Leave a review</h4>
+          <form onSubmit={handleSubmitReview}>
+            <input
+              type="email"
+              value={userEmail}
+              onChange={e => setUserEmail(e.target.value)}
+              placeholder="Your Email"
+              required
+            />
+
+            <textarea
+              value={reviewText}
+              onChange={e => setReviewText(e.target.value)}
+              rows={3}
+              placeholder="Write your review..."
+              required
+            />
+
+            <button type="submit">Submit Review</button>
+          </form>
+        </div>
+
+        <div>
+          <h4 className="all-reviews-title">All Reviews</h4>
+          {reviews.length === 0 ? (
+            <div className="no-reviews-message">No reviews yet.</div>
+          ) : (
+            reviews.map(r => (
+              <div key={r.id} className="review-card">
+                <div className="review-meta">
+                  {r.user_email} <span>({new Date(r.created_at).toLocaleString()})</span>
+                </div>
+                <div className="review-text">{r.review_text}</div>
+              </div>
+              
+            ))
+          )}
+          {showReviewSuccess && (
+  <div style={{
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100vh',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 9999
+  }}>
+    <div style={{
+      backgroundColor: 'white',
+      padding: '30px 50px',
+      borderRadius: '12px',
+      textAlign: 'center',
+      boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
+    }}>
+      <h2 style={{ marginBottom: '10px' }}>🎉 Thank You!</h2>
+      <p>Your review has been submitted successfully.</p>
+      <button
+        onClick={() => setShowReviewSuccess(false)}
+        style={{
+          marginTop: '15px',
+          padding: '8px 18px',
+          backgroundColor: '#ffa600',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer'
+        }}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
+        </div>
+      </div>
     </div>
   );
 };

@@ -21,6 +21,7 @@ import AdminProducts from './pages/admin/AdminProducts';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminMessages from './pages/admin/AdminMessages';
 import SignedInCheckout from './pages/SignedInCheckout';
+import AdminReviews from './pages/admin/AdminReviews';
 import './App.css';
 
 import { AuthProvider } from './context/authContext';
@@ -52,6 +53,7 @@ function App() {
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="messages" element={<AdminMessages />} />
+                <Route path="reviews" element={<AdminReviews />} />
               </Route>
             </Routes>
           </div>

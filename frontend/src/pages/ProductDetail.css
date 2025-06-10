@@ -1,4 +1,4 @@
-/*reviewed by Thamasha Kodithuwakku 24351177*/
+/* Sharan adhikari 24071844 */
 
 .product-detail {
     display: flex;
@@ -103,6 +103,129 @@
   font-size: 16px;
   min-width: 30px;
   text-align: center;
+}
+/* --- Ratings & Reviews Section Styles --- */
+.reviews-container {
+  max-width: 700px;
+  margin: 40px auto 0;
+  background: linear-gradient(135deg, #f9f9fa 60%, #eef1f5 100%);
+  padding: 32px;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px #0001;
+  border: 1.5px solid #e2e4ea;
+}
+
+.reviews-header {
+  font-weight: 700;
+  font-size: 26px;
+  margin-bottom: 16px;
+  color: #2a3147;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reviews-average {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 10px;
+}
+
+.reviews-average-number {
+  font-weight: 600;
+  font-size: 24px;
+  color: #ffa600;
+}
+
+.reviews-average-label {
+  font-size: 15px;
+  color: #777;
+  margin-left: 8px;
+}
+
+.leave-review-section {
+  margin: 18px 0 32px 0;
+  border-top: 1.5px solid #ececec;
+  padding-top: 18px;
+}
+
+.leave-review-section h4 {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #2a3147;
+}
+
+.leave-review-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.leave-review-section input,
+.leave-review-section textarea {
+  padding: 10px 12px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1.3px solid #ced1de;
+  font-family: 'Poppins';
+}
+
+.leave-review-section button[type="submit"] {
+  width: fit-content;
+  align-self: flex-end;
+  margin-top: 8px;
+  padding: 9px 20px;
+  background: linear-gradient(90deg, #3339ff 50%, #535ae6 100%);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px #3331;
+}
+
+.all-reviews-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #2a3147;
+}
+
+.no-reviews-message {
+  color: #888;
+  font-style: italic;
+  font-size: 16px;
+  text-align: center;
+  padding: 16px;
+}
+
+.review-card {
+  border: 1px solid #ececec;
+  border-radius: 10px;
+  background: #f7f8fb;
+  margin-bottom: 14px;
+  padding: 15px 18px;
+  box-shadow: 0 1px 6px #0001;
+}
+
+.review-card .review-meta {
+  font-size: 14px;
+  color: #4b5268;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.review-card .review-meta span {
+  font-size: 12px;
+  color: #839;
+}
+
+.review-card .review-text {
+  font-size: 15px;
+  color: #222;
+  margin-top: 2px;
 }
 
   

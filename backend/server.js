@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const db = require('./config/db');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
+
 const app = express();
 
 //  Middleware
@@ -20,12 +21,17 @@ const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const userRoutes = require('./routes/userRoutes');
 const contactRoutes = require('./routes/contactRoutes'); // New contact route
+const reviewRoutes = require('./routes/reviewRoutes');  
+const adminRoutes = require('./routes/adminRoutes');
 
 //  Prefix all routes with /api
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/admin', adminRoutes);
+
 
 //  Stripe Checkout
 app.post('/create-checkout-session', async (req, res) => {

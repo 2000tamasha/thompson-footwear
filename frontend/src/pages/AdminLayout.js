@@ -35,6 +35,7 @@ const AdminLayout = () => {
           <Link to="/admin/products" style={linkStyle}>🛍 Products</Link>
           <Link to="/admin/users" style={linkStyle}>👥 Users</Link>
           <Link to="/admin/messages" style={linkStyle}>📩 Messages</Link>
+          <Link to="/admin/reviews" style={linkStyle}>⭐ Reviews</Link>
 
           <hr />
           <Link to="/" style={linkStyle}>🔙 Back to Website</Link>
