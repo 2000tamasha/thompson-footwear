@@ -1,4 +1,4 @@
-// productController.js – Updated by Sharan Adhikari 24071844
+// productController.js – Final Working Version by Sharan Adhikari 24071844
 
 const db = require('../config/db');
 
@@ -42,7 +42,11 @@ const getProductById = async (req, res) => {
 // POST /api/products
 const createProduct = async (req, res) => {
   try {
-    const { name, price, category, description, image_url, stock, size_us, size_uk, size_eu, style_code, long_description, color_variants } = req.body;
+    const {
+      name, price, category, description, image_url, stock,
+      size_us, size_uk, size_eu, style_code, long_description,
+      color_variants, color
+    } = req.body;
 
     if (!name || !price || !category) {
       return res.status(400).json({ error: "Required fields: name, price, category" });
@@ -50,12 +54,16 @@ const createProduct = async (req, res) => {
 
     const query = `
       INSERT INTO products 
-      (name, price, category, description, image_url, stock, size_us, size_uk, size_eu, style_code, long_description, color_variants)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (name, price, category, description, image_url, stock, size_us, size_uk, size_eu,
+       style_code, long_description, color_variants, color)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    const values = [name, price, category, description, image_url, stock, size_us, size_uk, size_eu, style_code, long_description, color_variants];
-    await db.query(query, values);
+    const values = [
+      name, price, category, description, image_url, stock,
+      size_us, size_uk, size_eu, style_code, long_description, color_variants, color
+    ];
 
+    await db.query(query, values);
     res.status(201).json({ message: "Product created successfully" });
   } catch (error) {
     console.error("Error creating product:", error);
@@ -67,17 +75,26 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const productId = req.params.id;
-    const { name, price, category, description, image_url, stock, size_us, size_uk, size_eu, style_code, long_description, color_variants } = req.body;
+    const {
+      name, price, category, description, image_url, stock,
+      size_us, size_uk, size_eu, style_code, long_description,
+      color_variants, color
+    } = req.body;
 
     const query = `
       UPDATE products SET
       name = ?, price = ?, category = ?, description = ?, image_url = ?, stock = ?, 
-      size_us = ?, size_uk = ?, size_eu = ?, style_code = ?, long_description = ?, color_variants = ?
+      size_us = ?, size_uk = ?, size_eu = ?, style_code = ?, long_description = ?, 
+      color_variants = ?, color = ?
       WHERE id = ?
     `;
-    const values = [name, price, category, description, image_url, stock, size_us, size_uk, size_eu, style_code, long_description, color_variants, productId];
-    await db.query(query, values);
+    const values = [
+      name, price, category, description, image_url, stock,
+      size_us, size_uk, size_eu, style_code, long_description, color_variants, color,
+      productId
+    ];
 
+    await db.query(query, values);
     res.json({ message: "Product updated successfully" });
   } catch (error) {
     console.error("Error updating product:", error);

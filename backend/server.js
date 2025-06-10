@@ -1,42 +1,44 @@
-// server.js – Fully Updated Version by Sharan Adhikari
+// server.js – Final Working Version by Sharan Adhikari 24071844
 
 require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const db = require('./config/db');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-
 const app = express();
 
-//  Middleware
-app.use('/webhook', express.raw({ type: 'application/json' })); // Stripe raw payload
+//  Middleware 
+// For Stripe webhook (must come before express.json())
+app.use('/webhook', express.raw({ type: 'application/json' }));
+
+// Enable CORS for all routes
 app.use(cors());
-app.use(bodyParser.json());
 
-//  Routes
+// Parse JSON bodies for all other routes
+app.use(express.json());
+
+//  Route Imports
 const productRoutes = require('./routes/productRoutes');
-const orderRoutes = require('./routes/orderRoutes');
-const userRoutes = require('./routes/userRoutes');
-const contactRoutes = require('./routes/contactRoutes'); // New contact route
-const reviewRoutes = require('./routes/reviewRoutes');  
-const adminRoutes = require('./routes/adminRoutes');
+const orderRoutes   = require('./routes/orderRoutes');
+const userRoutes    = require('./routes/userRoutes');
+const contactRoutes = require('./routes/contactRoutes');
+const reviewRoutes  = require('./routes/reviewRoutes');
+const adminRoutes   = require('./routes/adminRoutes');
 
-//  Prefix all routes with /api
+//  API Routes
+// Prefix all with /api
 app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/contact', contactRoutes);
-app.use('/api/reviews', reviewRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/orders',   orderRoutes);
+app.use('/api/users',    userRoutes);
+app.use('/api/contact',  contactRoutes);
+app.use('/api/reviews',  reviewRoutes);
+app.use('/api/admin',    adminRoutes);
 
-
-//  Stripe Checkout
+// Stripe Checkout Endpoint
 app.post('/create-checkout-session', async (req, res) => {
   const { items } = req.body;
-
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -50,9 +52,8 @@ app.post('/create-checkout-session', async (req, res) => {
         quantity: item.quantity,
       })),
       success_url: 'http://localhost:3000/success',
-      cancel_url: 'http://localhost:3000/cart',
+      cancel_url:  'http://localhost:3000/cart',
     });
-
     res.json({ id: session.id });
   } catch (error) {
     console.error('Stripe Error:', error.message);
@@ -60,13 +61,11 @@ app.post('/create-checkout-session', async (req, res) => {
   }
 });
 
-// Stripe Webhook – Save order after payment
+// Stripe Webhook to Save Orders 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
 app.post('/webhook', (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
-
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
   } catch (err) {
@@ -76,37 +75,37 @@ app.post('/webhook', (req, res) => {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-
     const query = `
       INSERT INTO orders (user_email, full_name, address, phone, items, total_amount)
       VALUES (?, ?, ?, ?, ?, ?)
     `;
-
     db.query(query, [
       session.customer_details?.email || 'guest',
-      session.customer_details?.name || 'Guest User',
+      session.customer_details?.name  || 'Guest User',
       'Stripe Checkout Address',
       session.customer_details?.phone || 'N/A',
       '[]',
       session.amount_total / 100
     ], (err) => {
-      if (err) {
-        console.error(' Failed to save Stripe order:', err);
-      } else {
-        console.log(' Order saved from Stripe webhook');
-      }
+      if (err) console.error('Failed to save Stripe order:', err);
+      else    console.log('Order saved from Stripe webhook');
     });
   }
 
   res.json({ received: true });
 });
 
-//  Default Route
+//  Health Check
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-//  Start Server
+// 404 Handler 
+app.use((req, res) => {
+  res.status(404).json({ message: 'Not Found' });
+});
+
+//  Start Server 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);

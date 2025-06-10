@@ -41,9 +41,16 @@ const AdminLayout = () => {
           <Link to="/" style={linkStyle}>🔙 Back to Website</Link>
         </nav>
       </aside>
-      <main style={{ marginLeft: '260px', padding: '40px', flex: 1 }}>
-        <Outlet />
-      </main>
+      <main style={{ 
+  marginLeft: '260px', 
+  padding: '40px', 
+  flex: 1, 
+  position: 'relative', 
+  zIndex: 1 
+}}>
+  <Outlet />
+</main>
+
     </div>
   );
 };
