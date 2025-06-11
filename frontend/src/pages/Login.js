@@ -5,6 +5,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 import { loginUser } from '../services/authService';
 import Confetti from 'react-confetti';
+import { Link } from 'react-router-dom';
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -115,18 +117,19 @@ const Login = () => {
             </a>
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ fontSize: '13px' }}>
-              <input
-                type="checkbox"
-                checked={agreeTerms}
-                onChange={() => setAgreeTerms(!agreeTerms)}
-                style={{ marginRight: '10px' }}
-              />
-              By continuing, I agree to Thompson Footwear's <a href="#" style={{ color: '#555' }}>Privacy Policy</a> and 
-              <a href="#" style={{ color: '#555' }}> Terms of Use</a>.
-            </label>
-          </div>
+          <div className="form-check mb-3">
+  <input type="checkbox" className="form-check-input" id="agree" required />
+  <label className="form-check-label" htmlFor="agree">
+    By continuing, I agree to Thompson Footwear's{" "}
+    <Link to="/privacy-policy" style={{ color: '#555', textDecoration: 'underline' }}>
+      Privacy Policy
+    </Link>{" "}
+    and{" "}
+    <Link to="/terms-of-use" style={{ color: '#555', textDecoration: 'underline' }}>
+      Terms of Use
+    </Link>.
+  </label>
+</div>
 
           <button 
             onClick={handleLogin}

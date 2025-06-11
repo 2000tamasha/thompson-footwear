@@ -24,7 +24,6 @@ const ProductDetail = () => {
 
 
   const [reviews, setReviews] = useState([]);
-  const [average, setAverage] = useState(0);
   const [reviewText, setReviewText] = useState('');
   const [userEmail, setUserEmail] = useState('');
 

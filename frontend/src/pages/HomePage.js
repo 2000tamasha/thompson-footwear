@@ -13,8 +13,6 @@ import 'aos/dist/aos.css';
 const HomePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [searchTerm, setSearchTerm] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showContactModal, setShowContactModal] = useState(false);
 
@@ -47,10 +45,6 @@ const HomePage = () => {
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleSearch();
-  };
-
   const imageSources = [
     "/images/slide1.png",
     "/images/slide2.png",
@@ -58,18 +52,13 @@ const HomePage = () => {
   ];
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) =>
-        (prevIndex + 1) % imageSources.length
-      );
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleContactChange = (e) => {
-    const { name, value } = e.target;
-    setContact(prev => ({ ...prev, [name]: value }));
-  };
+  const interval = setInterval(() => {
+    setCurrentImageIndex((prevIndex) =>
+      (prevIndex + 1) % imageSources.length
+    );
+  }, 5000);
+  return () => clearInterval(interval);
+}, [imageSources.length]); //Correct usage 
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();

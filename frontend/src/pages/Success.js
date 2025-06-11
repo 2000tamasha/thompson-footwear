@@ -8,7 +8,7 @@ const Success = () => {
   useEffect(() => {
     // Clear cart both from state and localStorage on successful checkout
     clearCart();
-  }, []);
+  }, [clearCart]);
 
   return (
     <div style={{

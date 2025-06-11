@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import './ProductCard.css';
 import { useCart } from '../context/cartContext';
-import { useNavigate, Link } from 'react-router-dom';
 import Confetti from 'react-confetti';
 
 const ProductCard = ({ product }) => {

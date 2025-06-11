@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 import Confetti from 'react-confetti';
+import { Link } from 'react-router-dom';
 
 const Register = () => {
   const { setUser } = useAuth();
@@ -143,18 +144,23 @@ const Register = () => {
             <label>Date of Birth</label>
             <input type="date" name="dob" value={form.dob} onChange={handleChange} style={inputStyle} />
 
-            <label style={{ fontSize: '13px' }}>
-              <input
-                type="checkbox"
-                name="agreeTerms"
-                checked={form.agreeTerms}
-                onChange={handleChange}
-                style={{ marginRight: '10px' }}
-              />
-              I agree to Thompson Footwear's <a href="#" style={{ color: '#555' }}>Privacy Policy</a> and 
-              <a href="#" style={{ color: '#555' }}> Terms of Use</a>.
-            </label>
-
+           <label style={{ fontSize: '13px' }}>
+  <input
+    type="checkbox"
+    name="agreeTerms"
+    checked={form.agreeTerms}
+    onChange={handleChange}
+    style={{ marginRight: '10px' }}
+  />
+  I agree to Thompson Footwear's{" "}
+  <Link to="/privacy-policy" style={{ color: '#555', textDecoration: 'underline' }}>
+    Privacy Policy
+  </Link>{" "}
+  and{" "}
+  <Link to="/terms-of-use" style={{ color: '#555', textDecoration: 'underline' }}>
+    Terms of Use
+  </Link>.
+</label>
             <button type="submit" style={submitStyle}>Register</button>
           </form>
         </>

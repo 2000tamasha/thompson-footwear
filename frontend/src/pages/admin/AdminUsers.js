@@ -108,7 +108,6 @@ const AdminUsers = () => {
   const currentUsers = sortedUsers.slice(indexOfFirstUser, indexOfLastUser);
   const totalPages = Math.ceil(sortedUsers.length / usersPerPage);
 
-  const handleSort = (field) => {
     if (sortBy === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
@@ -470,7 +469,7 @@ const AdminUsers = () => {
       )}
     </div>
   );
-};
+
 
 // styles
 const containerStyle = {
