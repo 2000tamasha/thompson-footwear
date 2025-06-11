@@ -1,12 +1,11 @@
-// Login.js – Final version with conditional redirects by Sharan Adhikari
+/// Login.js – Fixed version with all issues resolved by Sharan Adhikari
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
 import { loginUser } from '../services/authService';
 import Confetti from 'react-confetti';
 import { Link } from 'react-router-dom';
-
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -15,24 +14,71 @@ const Login = () => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { setUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const isCheckoutFlow = new URLSearchParams(location.search).get('checkout') === '1';
   const [userName, setUserName] = useState('');
 
+  // Safe localStorage wrapper for SSR compatibility
+  const safeLocalStorage = {
+    setItem: (key, value) => {
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(key, value);
+        }
+      } catch (error) {
+        console.warn('Failed to save to localStorage:', error);
+      }
+    },
+    getItem: (key) => {
+      try {
+        if (typeof window !== 'undefined') {
+          return localStorage.getItem(key);
+        }
+      } catch (error) {
+        console.warn('Failed to read from localStorage:', error);
+      }
+      return null;
+    }
+  };
+
   const handleLogin = async () => {
+    // Clear previous errors
+    setError('');
+    
+    // Validation
     if (!email || !password || !agreeTerms) {
-      alert("Please fill in all fields and agree to terms.");
+      setError("Please fill in all fields and agree to terms.");
       return;
     }
 
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
       const data = await loginUser(email, password);
-      setUser(data.user);
-      setUserName(data.user.name);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      
+      // Check if login was successful
+      if (!data || !data.user) {
+        throw new Error('Invalid response from server');
+      }
 
+      setUser(data.user);
+      setUserName(data.user.name || data.user.email);
+      
+      // Safe localStorage usage
+      safeLocalStorage.setItem('user', JSON.stringify(data.user));
+
+      // Admin check
       const isAdmin = data.user?.role === 'admin' || data.user?.email === 'admin@example.com';
 
       if (isAdmin) {
@@ -43,13 +89,23 @@ const Login = () => {
         setShowWelcome(true);
       }
     } catch (err) {
-      alert("Login failed: " + err.message);
+      console.error('Login error:', err);
+      setError(err.message || "Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleWelcomeClose = () => {
     setShowWelcome(false);
     navigate('/');
+  };
+
+  // Handle Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !isLoading && agreeTerms && email && password) {
+      handleLogin();
+    }
   };
 
   return (
@@ -73,13 +129,22 @@ const Login = () => {
         <>
           <h2 style={{ marginBottom: '20px' }}>Enter your email to Sign In or Join Us</h2>
 
+          {/* Error Message Display */}
+          {error && (
+            <div style={errorStyle}>
+              {error}
+            </div>
+          )}
+
           <label>Email address</label>
           <input 
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyPress={handleKeyPress}
             placeholder="you@example.com"
             style={inputStyle}
+            disabled={isLoading}
           />
 
           <label>Country</label>
@@ -87,6 +152,7 @@ const Login = () => {
             value={country}
             onChange={(e) => setCountry(e.target.value)}
             style={inputStyle}
+            disabled={isLoading}
           >
             <option>Australia</option>
             <option>United States</option>
@@ -100,52 +166,65 @@ const Login = () => {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={handleKeyPress}
               placeholder="Enter your password"
               style={{ ...inputStyle, paddingRight: '40px' }}
+              disabled={isLoading}
             />
             <button 
               onClick={() => setShowPassword(!showPassword)}
               style={eyeButton}
+              disabled={isLoading}
             >
               {showPassword ? 'Hide' : 'Show'}
             </button>
           </div>
 
           <div style={{ marginBottom: '20px', textAlign: 'right' }}>
-            <a href="/forgot-password" style={{ fontSize: '13px', color: '#007bff' }}>
+            <Link to="/forgot-password" style={{ fontSize: '13px', color: '#007bff' }}>
               Forgot password?
-            </a>
+            </Link>
           </div>
 
-          <div className="form-check mb-3">
-  <input type="checkbox" className="form-check-input" id="agree" required />
-  <label className="form-check-label" htmlFor="agree">
-    By continuing, I agree to Thompson Footwear's{" "}
-    <Link to="/privacy-policy" style={{ color: '#555', textDecoration: 'underline' }}>
-      Privacy Policy
-    </Link>{" "}
-    and{" "}
-    <Link to="/terms-of-use" style={{ color: '#555', textDecoration: 'underline' }}>
-      Terms of Use
-    </Link>.
-  </label>
-</div>
+          {/* Fixed Checkbox - Now properly connected to state */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'flex', alignItems: 'flex-start', fontSize: '14px', lineHeight: '1.4' }}>
+              <input 
+                type="checkbox" 
+                checked={agreeTerms}
+                onChange={(e) => setAgreeTerms(e.target.checked)}
+                style={{ marginRight: '8px', marginTop: '2px', flexShrink: 0 }}
+                disabled={isLoading}
+              />
+              <span>
+                By continuing, I agree to Thompson Footwear's{" "}
+                <Link to="/privacy-policy" style={{ color: '#555', textDecoration: 'underline' }}>
+                  Privacy Policy
+                </Link>{" "}
+                and{" "}
+                <Link to="/terms-of-use" style={{ color: '#555', textDecoration: 'underline' }}>
+                  Terms of Use
+                </Link>.
+              </span>
+            </label>
+          </div>
 
           <button 
             onClick={handleLogin}
-            disabled={!agreeTerms}
+            disabled={!agreeTerms || !email || !password || isLoading}
             style={{
               ...primaryBtnStyle,
-              opacity: agreeTerms ? 1 : 0.5,
-              cursor: agreeTerms ? 'pointer' : 'not-allowed'
+              opacity: (agreeTerms && email && password && !isLoading) ? 1 : 0.5,
+              cursor: (agreeTerms && email && password && !isLoading) ? 'pointer' : 'not-allowed'
             }}
           >
-            Continue
+            {isLoading ? 'Signing in...' : 'Continue'}
           </button>
 
           <button 
             onClick={() => navigate('/register')}
             style={secondaryBtnStyle}
+            disabled={isLoading}
           >
             New here? Sign Up
           </button>
@@ -184,7 +263,8 @@ const primaryBtnStyle = {
   fontFamily: 'Poppins',
   border: 'none',
   fontWeight: 'bold',
-  marginBottom: '20px'
+  marginBottom: '20px',
+  transition: 'opacity 0.2s'
 };
 
 const secondaryBtnStyle = {
@@ -242,6 +322,16 @@ const buttonStyle = {
   background: '#2a9d8f',
   color: '#fff',
   cursor: 'pointer'
+};
+
+const errorStyle = {
+  background: '#fee',
+  color: '#c33',
+  padding: '10px',
+  borderRadius: '4px',
+  marginBottom: '20px',
+  border: '1px solid #fcc',
+  fontSize: '14px'
 };
 
 export default Login;
