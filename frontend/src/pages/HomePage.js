@@ -1,4 +1,4 @@
-// HomePage.js – Final Update (with working map and login)
+// HomePage.js – Fixed version for production deployment
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -21,6 +21,10 @@ const HomePage = () => {
   });
   const [contactSuccess, setContactSuccess] = useState('');
   const [contactError, setContactError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Get API base URL for production
+  const API_BASE_URL = process.env.REACT_APP_API_URL || window.location.origin.replace(':3000', ':5000');
 
   const handleContactChange = (e) => {
     const { name, value } = e.target;
@@ -29,7 +33,9 @@ const HomePage = () => {
 
   useEffect(() => {
     if (location.state?.welcomeName) {
-      alert(`Welcome, ${location.state.welcomeName}!`);
+      // Use a better notification instead of alert
+      setContactSuccess(`Welcome, ${location.state.welcomeName}!`);
+      setTimeout(() => setContactSuccess(''), 3000);
     }
   }, [location.state]);
 
@@ -65,11 +71,15 @@ const HomePage = () => {
     e.preventDefault();
     setContactSuccess('');
     setContactError('');
+    setIsSubmitting(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/contact', {
+      const response = await fetch(`${API_BASE_URL}/api/contact`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify(contact)
       });
 
@@ -83,17 +93,42 @@ const HomePage = () => {
       }
     } catch (error) {
       console.error("Contact form error:", error);
-      setContactError('Server error. Please try again later.');
+      setContactError('Unable to send message. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="homepage">
+      {/* Success/Welcome notification banner */}
+      {contactSuccess && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          background: '#28a745',
+          color: 'white',
+          padding: '10px 20px',
+          borderRadius: '5px',
+          zIndex: 1000,
+          fontFamily: 'Poppins'
+        }}>
+          {contactSuccess}
+        </div>
+      )}
+
       <div className="hero-slideshow">
         <img
           src={imageSources[currentImageIndex]}
           alt="Slideshow Banner"
           className="slideshow-image"
+          style={{
+            width: '100%',
+            height: '500px',
+            objectFit: 'cover',
+            objectPosition: 'center'
+          }}
         />
         <div className="hero-text-overlay">
           <h1>Welcome to Thompson Footwear 👟</h1>
@@ -132,9 +167,87 @@ const HomePage = () => {
       <div className="category-section" data-aos="fade-up">
         <h2>Shop by Category</h2>
         <div className="category-cards">
-          <div className="category-card men" onClick={() => navigate('/products?category=men')} style={{ backgroundImage: 'url(/images/maleCat.png)' }}>Men</div>
-          <div className="category-card women" onClick={() => navigate('/products?category=women')} style={{ backgroundImage: 'url(/images/womenCat.png)' }}>Women</div>
-          <div className="category-card kids" onClick={() => navigate('/products?category=children')} style={{ backgroundImage: 'url(/images/kidCat.png)' }}>Kids</div>
+          <div 
+            className="category-card men" 
+            onClick={() => navigate('/products?category=men')} 
+            style={{ 
+              backgroundImage: 'url(/images/maleCat.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              height: '300px',
+              width: '100%',
+              display: 'flex',
+              alignItems: 'flex-end',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px',
+              fontWeight: 'bold',
+              padding: '20px',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
+              cursor: 'pointer',
+              borderRadius: '10px',
+              transition: 'transform 0.3s ease'
+            }}
+            onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+            onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+          >
+            Men
+          </div>
+          <div 
+            className="category-card women" 
+            onClick={() => navigate('/products?category=women')} 
+            style={{ 
+              backgroundImage: 'url(/images/womenCat.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              height: '300px',
+              width: '100%',
+              display: 'flex',
+              alignItems: 'flex-end',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px',
+              fontWeight: 'bold',
+              padding: '20px',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
+              cursor: 'pointer',
+              borderRadius: '10px',
+              transition: 'transform 0.3s ease'
+            }}
+            onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+            onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+          >
+            Women
+          </div>
+          <div 
+            className="category-card kids" 
+            onClick={() => navigate('/products?category=children')} 
+            style={{ 
+              backgroundImage: 'url(/images/kidCat.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              height: '300px',
+              width: '100%',
+              display: 'flex',
+              alignItems: 'flex-end',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px',
+              fontWeight: 'bold',
+              padding: '20px',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
+              cursor: 'pointer',
+              borderRadius: '10px',
+              transition: 'transform 0.3s ease'
+            }}
+            onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+            onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+          >
+            Kids
+          </div>
         </div>
       </div>
 
@@ -149,7 +262,7 @@ const HomePage = () => {
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3363.557330230218!2d115.90452337555458!3d-31.89910337403406!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2a32b0f3b9ea2573%3A0x9e305a00e8e49155!2s25%20King%20St%2C%20Morley%20WA%206062%2C%20Australia!5e0!3m2!1sen!2sau!4v1719908721156!5m2!1sen!2sau"
           width="100%"
           height="300"
-          style={{ border: 0 }}
+          style={{ border: 0, borderRadius: '10px' }}
           allowFullScreen=""
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
@@ -167,6 +280,7 @@ const HomePage = () => {
             onChange={handleContactChange}
             placeholder="Your name"
             required
+            disabled={isSubmitting}
           />
         </div>
 
@@ -180,6 +294,7 @@ const HomePage = () => {
             onChange={handleContactChange}
             placeholder="Your email"
             required
+            disabled={isSubmitting}
           />
         </div>
 
@@ -193,13 +308,34 @@ const HomePage = () => {
             onChange={handleContactChange}
             placeholder="Your message"
             required
+            disabled={isSubmitting}
           ></textarea>
         </div>
 
-        {contactSuccess && <p style={{ color: 'green' }}>{contactSuccess}</p>}
-        {contactError && <p style={{ color: 'red' }}>{contactError}</p>}
+        {contactError && (
+          <div style={{ 
+            color: '#e74c3c', 
+            background: '#fee', 
+            padding: '10px', 
+            borderRadius: '5px',
+            marginBottom: '15px',
+            border: '1px solid #fcc'
+          }}>
+            {contactError}
+          </div>
+        )}
 
-        <button type="submit" style={{ fontFamily: 'Poppins' }}>Send Message</button>
+        <button 
+          type="submit" 
+          style={{ 
+            fontFamily: 'Poppins',
+            opacity: isSubmitting ? 0.6 : 1,
+            cursor: isSubmitting ? 'not-allowed' : 'pointer'
+          }}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Sending...' : 'Send Message'}
+        </button>
 
         {showContactModal && (
           <div className="newsletter-modal">
