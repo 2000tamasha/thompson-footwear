@@ -1,4 +1,4 @@
-/// Login.js – Fixed version with all issues resolved by Sharan Adhikari
+// Login.js – Fixed version with all issues resolved
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -21,6 +21,9 @@ const Login = () => {
   const location = useLocation();
   const isCheckoutFlow = new URLSearchParams(location.search).get('checkout') === '1';
   const [userName, setUserName] = useState('');
+
+  // Get API base URL for production (same as HomePage)
+  const API_BASE_URL = process.env.REACT_APP_API_URL || window.location.origin.replace(':3000', ':5000');
 
   // Safe localStorage wrapper for SSR compatibility
   const safeLocalStorage = {
@@ -45,13 +48,23 @@ const Login = () => {
     }
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    // Prevent form submission if this is called from a form
+    if (e) {
+      e.preventDefault();
+    }
+
     // Clear previous errors
     setError('');
     
     // Validation
-    if (!email || !password || !agreeTerms) {
-      setError("Please fill in all fields and agree to terms.");
+    if (!email || !password) {
+      setError("Please fill in both email and password.");
+      return;
+    }
+
+    if (!agreeTerms) {
+      setError("Please agree to the terms and conditions.");
       return;
     }
 
@@ -65,21 +78,50 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const data = await loginUser(email, password);
+      // Try using the loginUser service first
+      let data;
+      try {
+        data = await loginUser(email, password);
+      } catch (serviceError) {
+        // If the service fails, try direct API call
+        console.log('Service failed, trying direct API call...');
+        const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Login failed');
+        }
+
+        data = await response.json();
+      }
       
       // Check if login was successful
-      if (!data || !data.user) {
+      if (!data || !data.user && !data.token) {
         throw new Error('Invalid response from server');
       }
 
-      setUser(data.user);
-      setUserName(data.user.name || data.user.email);
+      // Handle different response formats
+      const user = data.user || { email, name: data.name };
+      const token = data.token;
+
+      setUser(user);
+      setUserName(user.name || user.email || email);
       
       // Safe localStorage usage
-      safeLocalStorage.setItem('user', JSON.stringify(data.user));
+      if (token) {
+        safeLocalStorage.setItem('token', token);
+      }
+      safeLocalStorage.setItem('user', JSON.stringify(user));
 
       // Admin check
-      const isAdmin = data.user?.role === 'admin' || data.user?.email === 'admin@example.com';
+      const isAdmin = user?.role === 'admin' || user?.email === 'admin@example.com';
 
       if (isAdmin) {
         navigate('/admin/dashboard');
@@ -90,7 +132,7 @@ const Login = () => {
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.message || "Login failed. Please try again.");
+      setError(err.message || "Login failed. Please check your credentials and try again.");
     } finally {
       setIsLoading(false);
     }
@@ -98,7 +140,9 @@ const Login = () => {
 
   const handleWelcomeClose = () => {
     setShowWelcome(false);
-    navigate('/');
+    navigate('/', { 
+      state: { welcomeName: userName }
+    });
   };
 
   // Handle Enter key press
@@ -108,6 +152,12 @@ const Login = () => {
     }
   };
 
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleLogin(e);
+  };
+
   return (
     <div style={containerStyle}>
       {showWelcome && (
@@ -115,10 +165,10 @@ const Login = () => {
           <Confetti />
           <div style={modalOverlay}>
             <div style={modalContent}>
-              <h2>Hi {userName},</h2>
-              <p>🎉 Welcome to the Thompson Store!</p>
+              <h2>Hi {userName}!</h2>
+              <p>🎉 Welcome to Thompson Footwear!</p>
               <button onClick={handleWelcomeClose} style={buttonStyle}>
-                OK
+                Continue Shopping
               </button>
             </div>
           </div>
@@ -126,7 +176,7 @@ const Login = () => {
       )}
 
       {!showWelcome && (
-        <>
+        <form onSubmit={handleSubmit}>
           <h2 style={{ marginBottom: '20px' }}>Enter your email to Sign In or Join Us</h2>
 
           {/* Error Message Display */}
@@ -145,6 +195,7 @@ const Login = () => {
             placeholder="you@example.com"
             style={inputStyle}
             disabled={isLoading}
+            required
           />
 
           <label>Country</label>
@@ -170,8 +221,10 @@ const Login = () => {
               placeholder="Enter your password"
               style={{ ...inputStyle, paddingRight: '40px' }}
               disabled={isLoading}
+              required
             />
             <button 
+              type="button"
               onClick={() => setShowPassword(!showPassword)}
               style={eyeButton}
               disabled={isLoading}
@@ -210,7 +263,7 @@ const Login = () => {
           </div>
 
           <button 
-            onClick={handleLogin}
+            type="submit"
             disabled={!agreeTerms || !email || !password || isLoading}
             style={{
               ...primaryBtnStyle,
@@ -222,13 +275,14 @@ const Login = () => {
           </button>
 
           <button 
+            type="button"
             onClick={() => navigate('/register')}
             style={secondaryBtnStyle}
             disabled={isLoading}
           >
             New here? Sign Up
           </button>
-        </>
+        </form>
       )}
     </div>
   );
