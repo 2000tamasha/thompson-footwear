@@ -172,7 +172,7 @@ const HomePage = () => {
             onClick={() => navigate('/products?category=men')} 
             style={{ 
               backgroundImage: 'url(/images/maleCat.png)',
-              backgroundSize: 'cover',
+              backgroundSize: 'contain',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
               height: '300px',
@@ -187,7 +187,8 @@ const HomePage = () => {
               textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
               cursor: 'pointer',
               borderRadius: '10px',
-              transition: 'transform 0.3s ease'
+              transition: 'transform 0.3s ease',
+              backgroundColor: '#f0f0f0'
             }}
             onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
             onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
@@ -199,7 +200,7 @@ const HomePage = () => {
             onClick={() => navigate('/products?category=women')} 
             style={{ 
               backgroundImage: 'url(/images/womenCat.png)',
-              backgroundSize: 'cover',
+              backgroundSize: 'contain',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
               height: '300px',
@@ -214,7 +215,8 @@ const HomePage = () => {
               textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
               cursor: 'pointer',
               borderRadius: '10px',
-              transition: 'transform 0.3s ease'
+              transition: 'transform 0.3s ease',
+              backgroundColor: '#f0f0f0'
             }}
             onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
             onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
@@ -226,7 +228,7 @@ const HomePage = () => {
             onClick={() => navigate('/products?category=children')} 
             style={{ 
               backgroundImage: 'url(/images/kidCat.png)',
-              backgroundSize: 'cover',
+              backgroundSize: 'contain',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
               height: '300px',
@@ -241,7 +243,8 @@ const HomePage = () => {
               textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
               cursor: 'pointer',
               borderRadius: '10px',
-              transition: 'transform 0.3s ease'
+              transition: 'transform 0.3s ease',
+              backgroundColor: '#f0f0f0'
             }}
             onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
             onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
