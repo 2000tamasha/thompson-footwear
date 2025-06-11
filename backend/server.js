@@ -39,6 +39,12 @@ app.use('/api/admin',    adminRoutes);
 // Stripe Checkout Endpoint
 app.post('/create-checkout-session', async (req, res) => {
   const { items } = req.body;
+  
+  // Determine the base URL based on environment
+  const baseUrl = process.env.NODE_ENV === 'production' 
+    ? process.env.FRONTEND_URL || `https://${req.get('host')}`
+    : 'http://localhost:3000';
+  
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -51,14 +57,36 @@ app.post('/create-checkout-session', async (req, res) => {
         },
         quantity: item.quantity,
       })),
-      success_url: 'http://localhost:3000/success',
-      cancel_url:  'http://localhost:3000/cart',
+      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url:  `${baseUrl}/cart`,
     });
     res.json({ id: session.id });
   } catch (error) {
     console.error('Stripe Error:', error.message);
     res.status(500).json({ error: 'Failed to create Stripe session' });
   }
+});
+
+// Success route to handle Stripe redirects
+app.get('/success', (req, res) => {
+  const sessionId = req.query.session_id;
+ 
+  res.send(`
+    <html>
+      <head><title>Payment Successful</title></head>
+      <body>
+        <h1>Payment Successful!</h1>
+        <p>Your order has been submitted successfully.</p>
+        <p>Session ID: ${sessionId}</p>
+        <script>
+          // Redirect to your frontend after 3 seconds
+          setTimeout(() => {
+            window.location.href = '${process.env.FRONTEND_URL || 'http://localhost:3000'}/order-confirmation';
+          }, 3000);
+        </script>
+      </body>
+    </html>
+  `);
 });
 
 // Stripe Webhook to Save Orders 
