@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import './ProductCard.css';
 import { useCart } from '../context/cartContext';
 import Confetti from 'react-confetti';
+import { Link } from 'react-router-dom';
+
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();

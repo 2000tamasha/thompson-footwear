@@ -10,9 +10,11 @@ import 'aos/dist/aos.css';
 
 
 
+
 const HomePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showContactModal, setShowContactModal] = useState(false);
 
@@ -285,22 +287,19 @@ const HomePage = () => {
         ></iframe>
       </div>
 
-      <div className="contact-form-section">
-        <h2>Get in Touch</h2>
-        <p>Have a question, feedback, or just want to say hi? Drop us a message!</p>
-        <form className="contact-form" onSubmit={handleContactSubmit}>
-          <div className="form-group">
-            <label htmlFor="name">Full Name</label>
-            <input
-              type="text"
-              id="name"
-              name="full_name"
-              value={contact.full_name}
-              onChange={handleContactChange}
-              placeholder="Your name"
-              required
-            />
-          </div>
+      <form className="contact-form" onSubmit={handleContactSubmit}>
+  <div className="form-group">
+    <label htmlFor="name">Full Name</label>
+    <input
+      type="text"
+      id="name"
+      name="full_name"
+      value={contact.full_name}
+      onChange={handleContactChange}
+      placeholder="Your name"
+      required
+    />
+  </div>
           {showContactModal && (
             <div className="newsletter-modal">
               <div className="newsletter-modal-content">
@@ -348,7 +347,6 @@ const HomePage = () => {
           <button type="submit" style={{ fontFamily: 'Poppins' }}>Send Message</button>
         </form>
       </div>
-    </div>
   );
 };
 
