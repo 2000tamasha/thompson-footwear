@@ -56,7 +56,10 @@ const Home = () => {
         
         const res = await axios.get(url);
         console.log('Successfully fetched products:', res.data);
-        setProducts(res.data);
+        
+        // Ensure response is an array
+        const productsData = Array.isArray(res.data) ? res.data : [];
+        setProducts(productsData);
       } catch (err) {
         console.error('Error fetching products:', err);
         console.error('Error details:', {
@@ -82,13 +85,13 @@ const Home = () => {
   }, [category, API_BASE_URL]);
 
   useEffect(() => {
-    if (search) {
+    if (search && Array.isArray(products)) {
       const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(search.toLowerCase())
+        product.name && product.name.toLowerCase().includes(search.toLowerCase())
       );
       setFiltered(filteredProducts);
     } else {
-      setFiltered(products);
+      setFiltered(Array.isArray(products) ? products : []);
     }
   }, [products, search]);
 
@@ -119,7 +122,7 @@ const Home = () => {
       </h2>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-        {filtered.length > 0 ? (
+        {Array.isArray(filtered) && filtered.length > 0 ? (
           filtered.map(product => (
             <ProductCard key={product.id} product={product} />
           ))
