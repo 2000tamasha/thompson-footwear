@@ -1,5 +1,3 @@
-// Login.js – Fixed version with all issues resolved
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
@@ -22,10 +20,8 @@ const Login = () => {
   const isCheckoutFlow = new URLSearchParams(location.search).get('checkout') === '1';
   const [userName, setUserName] = useState('');
 
-  // Get API base URL for production (same as HomePage)
-  const API_BASE_URL = process.env.REACT_APP_API_URL || window.location.origin.replace(':3000', ':5000');
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-  // Safe localStorage wrapper for SSR compatibility
   const safeLocalStorage = {
     setItem: (key, value) => {
       try {
@@ -49,15 +45,12 @@ const Login = () => {
   };
 
   const handleLogin = async (e) => {
-    // Prevent form submission if this is called from a form
     if (e) {
       e.preventDefault();
     }
 
-    // Clear previous errors
     setError('');
     
-    // Validation
     if (!email || !password) {
       setError("Please fill in both email and password.");
       return;
@@ -68,7 +61,6 @@ const Login = () => {
       return;
     }
 
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError("Please enter a valid email address.");
@@ -78,13 +70,10 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      // Try using the loginUser service first
       let data;
       try {
         data = await loginUser(email, password);
       } catch (serviceError) {
-        // If the service fails, try direct API call
-        console.log('Service failed, trying direct API call...');
         const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
           method: 'POST',
           headers: {
@@ -102,25 +91,21 @@ const Login = () => {
         data = await response.json();
       }
       
-      // Check if login was successful
       if (!data || !data.user && !data.token) {
         throw new Error('Invalid response from server');
       }
 
-      // Handle different response formats
       const user = data.user || { email, name: data.name };
       const token = data.token;
 
       setUser(user);
       setUserName(user.name || user.email || email);
       
-      // Safe localStorage usage
       if (token) {
         safeLocalStorage.setItem('token', token);
       }
       safeLocalStorage.setItem('user', JSON.stringify(user));
 
-      // Admin check
       const isAdmin = user?.role === 'admin' || user?.email === 'admin@example.com';
 
       if (isAdmin) {
@@ -145,14 +130,12 @@ const Login = () => {
     });
   };
 
-  // Handle Enter key press
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !isLoading && agreeTerms && email && password) {
       handleLogin();
     }
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     handleLogin(e);
@@ -179,7 +162,6 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <h2 style={{ marginBottom: '20px' }}>Enter your email to Sign In or Join Us</h2>
 
-          {/* Error Message Display */}
           {error && (
             <div style={errorStyle}>
               {error}
@@ -239,7 +221,6 @@ const Login = () => {
             </Link>
           </div>
 
-          {/* Fixed Checkbox - Now properly connected to state */}
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'flex', alignItems: 'flex-start', fontSize: '14px', lineHeight: '1.4' }}>
               <input 
