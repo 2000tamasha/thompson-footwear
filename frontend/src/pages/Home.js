@@ -1,5 +1,3 @@
-//24071844 sharan adhikari
-
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -14,23 +12,34 @@ const Home = () => {
 
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Use environment variable for API URL, fallback to localhost for development
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true);
+        setError(null);
+        
         const url = category
-          ? `http://localhost:5000/api/products?category=${category}`
-          : `http://localhost:5000/api/products`;
+          ? `${API_BASE_URL}/api/products?category=${category}`
+          : `${API_BASE_URL}/api/products`;
 
         const res = await axios.get(url);
         setProducts(res.data);
       } catch (err) {
         console.error('Error fetching products:', err);
+        setError('Failed to load products. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchProducts();
-  }, [category]);
+  }, [category, API_BASE_URL]);
 
   useEffect(() => {
     if (search) {
@@ -43,9 +52,25 @@ const Home = () => {
     }
   }, [products, search]);
 
+  if (loading) {
+    return (
+      <div style={{ padding: '20px', fontFamily: 'Poppins', marginTop: '75px', textAlign: 'center' }}>
+        <p>Loading products...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ padding: '20px', fontFamily: 'Poppins', marginTop: '75px', textAlign: 'center' }}>
+        <p style={{ color: 'red' }}>{error}</p>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ padding: '20px' , fontFamily:'Poppins', marginTop:'75px'}}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px',fontFamily:'Poppins' }}>
+    <div style={{ padding: '20px', fontFamily: 'Poppins', marginTop: '75px' }}>
+      <h2 style={{ textAlign: 'center', marginBottom: '20px', fontFamily: 'Poppins' }}>
         {search
           ? `Results for "${search}"`
           : category

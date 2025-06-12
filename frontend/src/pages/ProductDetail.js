@@ -23,57 +23,58 @@ const ProductDetail = () => {
   const { addToCart } = useCart();
   const [showReviewSuccess, setShowReviewSuccess] = useState(false);
 
-
   const [reviews, setReviews] = useState([]);
   const [reviewText, setReviewText] = useState('');
   const [userEmail, setUserEmail] = useState('');
 
+  // Get API URL from environment variable or fallback to localhost for development
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/products/${id}`)
+    axios.get(`${API_URL}/api/products/${id}`)
       .then((res) => setProduct(res.data))
       .catch((err) => {
         console.error("Error fetching product", err);
         setProduct({});
       });
-  }, [id]);
+  }, [id, API_URL]);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/reviews/${id}`).then(res => setReviews(res.data));
-    axios.get(`http://localhost:5000/api/reviews/${id}/average`).then(res => setAverage(res.data.average || 0));
-  }, [id]);
+    axios.get(`${API_URL}/api/reviews/${id}`).then(res => setReviews(res.data));
+    axios.get(`${API_URL}/api/reviews/${id}/average`).then(res => setAverage(res.data.average || 0));
+  }, [id, API_URL]);
 
   const handleSubmitReview = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!userEmail || !reviewText) {
-    alert('❌ Please enter your email and comment.');
-    return;
-  }
+    if (!userEmail || !reviewText) {
+      alert('❌ Please enter your email and comment.');
+      return;
+    }
 
-  try {
-    await axios.post(`http://localhost:5000/api/reviews/${id}`, {
-      user_email: userEmail,
-      rating: 5, // Optional default
-      review_text: reviewText
-    });
+    try {
+      await axios.post(`${API_URL}/api/reviews/${id}`, {
+        user_email: userEmail,
+        rating: 5, // Optional default
+        review_text: reviewText
+      });
 
-    setUserEmail('');
-    setReviewText('');
+      setUserEmail('');
+      setReviewText('');
 
-    //  Show custom success modal
-    setShowReviewSuccess(true);
-    setTimeout(() => setShowReviewSuccess(false), 3000); // auto-hide after 3s
+      // Show custom success modal
+      setShowReviewSuccess(true);
+      setTimeout(() => setShowReviewSuccess(false), 3000); // auto-hide after 3s
 
-    const resReviews = await axios.get(`http://localhost:5000/api/reviews/${id}`);
-    const resAvg = await axios.get(`http://localhost:5000/api/reviews/${id}/average`);
-    setReviews(resReviews.data);
-    setAverage(resAvg.data.average || 0);
-  } catch (err) {
-    console.error('Review submission failed:', err);
-    alert('❌ Failed to submit review. Please try again.');
-  }
-};
-
+      const resReviews = await axios.get(`${API_URL}/api/reviews/${id}`);
+      const resAvg = await axios.get(`${API_URL}/api/reviews/${id}/average`);
+      setReviews(resReviews.data);
+      setAverage(resAvg.data.average || 0);
+    } catch (err) {
+      console.error('Review submission failed:', err);
+      alert('❌ Failed to submit review. Please try again.');
+    }
+  };
 
   const handleAddToCart = () => {
     if (!selectedSize) return;
@@ -171,13 +172,13 @@ const ProductDetail = () => {
             <h3>📏 Size Guide</h3>
             <p>US Sizes correspond to foot lengths in inches.<br />If you're in between sizes, go one up!</p>
             <ul style={{ textAlign: 'left', paddingLeft: '20px' }}>
-              <li>US 6 = 9.25”</li>
-              <li>US 7 = 9.625”</li>
-              <li>US 8 = 9.9375”</li>
-              <li>US 9 = 10.25”</li>
-              <li>US 10 = 10.5625”</li>
-              <li>US 11 = 10.9375”</li>
-              <li>US 12 = 11.25”</li>
+              <li>US 6 = 9.25"</li>
+              <li>US 7 = 9.625"</li>
+              <li>US 8 = 9.9375"</li>
+              <li>US 9 = 10.25"</li>
+              <li>US 10 = 10.5625"</li>
+              <li>US 11 = 10.9375"</li>
+              <li>US 12 = 11.25"</li>
             </ul>
             <button onClick={() => setShowSizeGuide(false)}>Close</button>
           </div>
@@ -187,7 +188,7 @@ const ProductDetail = () => {
       {showAddedModal && (
         <div className="newsletter-modal">
           <div className="newsletter-modal-content">
-            <h3> Added to Bag!</h3>
+            <h3>Added to Bag!</h3>
             <p>{product.name} (Size {selectedSize}, Qty {quantity})</p>
             <button onClick={() => setShowAddedModal(false)}>OK</button>
           </div>
@@ -243,49 +244,47 @@ const ProductDetail = () => {
                 </div>
                 <div className="review-text">{r.review_text}</div>
               </div>
-              
             ))
           )}
           {showReviewSuccess && (
-  <div style={{
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100vh',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 9999
-  }}>
-    <div style={{
-      backgroundColor: 'white',
-      padding: '30px 50px',
-      borderRadius: '12px',
-      textAlign: 'center',
-      boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
-    }}>
-      <h2 style={{ marginBottom: '10px' }}>🎉 Thank You!</h2>
-      <p>Your review has been submitted successfully.</p>
-      <button
-        onClick={() => setShowReviewSuccess(false)}
-        style={{
-          marginTop: '15px',
-          padding: '8px 18px',
-          backgroundColor: '#ffa600',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: 'pointer'
-        }}
-      >
-        Close
-      </button>
-    </div>
-  </div>
-)}
-
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100vh',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 9999
+            }}>
+              <div style={{
+                backgroundColor: 'white',
+                padding: '30px 50px',
+                borderRadius: '12px',
+                textAlign: 'center',
+                boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
+              }}>
+                <h2 style={{ marginBottom: '10px' }}>🎉 Thank You!</h2>
+                <p>Your review has been submitted successfully.</p>
+                <button
+                  onClick={() => setShowReviewSuccess(false)}
+                  style={{
+                    marginTop: '15px',
+                    padding: '8px 18px',
+                    backgroundColor: '#ffa600',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
