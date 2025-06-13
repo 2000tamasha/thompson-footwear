@@ -1,4 +1,4 @@
-// SignedInCheckout.js – Enhanced Confirmation 
+// SignedInCheckout.js – Enhanced Confirmation with Debug Logging
 
 import React, { useState } from 'react';
 import { useCart } from '../context/cartContext';
@@ -106,12 +106,52 @@ const SignedInCheckout = () => {
       return;
     }
 
+    // DEBUG LOGGING - Check cart item structure
+    console.log('=== CHECKOUT DEBUG START ===');
+    console.log('Raw cartItems:', cartItems);
+    console.log('Number of items:', cartItems.length);
+    
+    // Check each item structure
+    cartItems.forEach((item, index) => {
+      console.log(`Item ${index + 1}:`, {
+        name: item.name,
+        price: item.price,
+        priceType: typeof item.price,
+        quantity: item.quantity,
+        quantityType: typeof item.quantity,
+        allProperties: Object.keys(item)
+      });
+    });
+
+    // Format items for order API
+    const orderItems = cartItems.map(item => ({
+      name: item.name || 'Unknown Product',
+      price: parseFloat(item.price) || 0,
+      quantity: parseInt(item.quantity) || 1,
+      id: item.id,
+      selectedSize: item.selectedSize
+    }));
+
+    // Format items for Stripe
+    const stripeItems = cartItems.map(item => ({
+      name: item.name || 'Unknown Product',
+      quantity: parseInt(item.quantity) || 1,
+      price: Math.round(parseFloat(item.price) * 100), // Convert to cents
+    }));
+
+    console.log('Formatted items for order API:', orderItems);
+    console.log('Formatted items for Stripe:', stripeItems);
+    console.log('Total amount:', total);
+    console.log('API_BASE_URL:', API_BASE_URL);
+    console.log('=== CHECKOUT DEBUG END ===');
+
     setIsLoading(true);
     setShowMessage(true);
     setError('');
 
     try {
       // FIXED: Save order to database using correct API endpoint
+      console.log('Attempting to save order...');
       const orderResponse = await fetch(`${API_BASE_URL}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -120,45 +160,59 @@ const SignedInCheckout = () => {
           full_name: form.name,
           address: form.address,
           phone: form.phone,
-          items: cartItems,
+          items: orderItems, // Use formatted items
           total_amount: total,
           payment_method: form.paymentMethod
         })
       });
 
+      console.log('Order response status:', orderResponse.status);
+      
       if (!orderResponse.ok) {
-        throw new Error('Failed to save order');
+        const errorText = await orderResponse.text();
+        console.error('Order save failed:', errorText);
+        throw new Error(`Failed to save order: ${orderResponse.status}`);
       }
 
+      const orderResult = await orderResponse.json();
+      console.log('Order saved successfully:', orderResult);
+
       // FIXED: Create Stripe checkout session using correct API endpoint
+      console.log('Creating Stripe session...');
       const stripe = await loadStripe('pk_test_51RDfRhQmyo6fDX1pbbkVAIPWdD4V2680GmmKGYGnBaA6oM8YwwR5VmbVAXbXG4K0BIiHFp6kqIXjixtFQQOW9CHb00UKW7YphX');
       
       const sessionResponse = await fetch(`${API_BASE_URL}/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: cartItems.map(item => ({
-            name: item.name,
-            quantity: item.quantity || 1,
-            price: Math.round(parseFloat(item.price) * 100), // Convert to cents
-          }))
+          items: stripeItems // Use formatted Stripe items
         })
       });
 
+      console.log('Stripe session response status:', sessionResponse.status);
+
       if (!sessionResponse.ok) {
-        throw new Error('Failed to create payment session');
+        const errorText = await sessionResponse.text();
+        console.error('Stripe session creation failed:', errorText);
+        throw new Error(`Failed to create payment session: ${sessionResponse.status}`);
       }
 
       const session = await sessionResponse.json();
+      console.log('Stripe session created:', session);
+
+      if (!session.id) {
+        throw new Error('No session ID returned from Stripe');
+      }
 
       // Delay to show success message
       setTimeout(() => {
+        console.log('Redirecting to Stripe with session ID:', session.id);
         stripe.redirectToCheckout({ sessionId: session.id });
       }, 2500);
 
     } catch (err) {
       console.error('Checkout error:', err);
-      setError('Error placing order. Please try again.');
+      setError(`Error placing order: ${err.message}`);
       setShowMessage(false);
     } finally {
       setIsLoading(false);
