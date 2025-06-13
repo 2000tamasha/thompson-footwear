@@ -23,7 +23,7 @@ const Login = () => {
   // FIXED: Updated API_BASE_URL to use REACT_APP_API_URL first
   const API_BASE_URL = process.env.REACT_APP_API_URL || 
     (process.env.NODE_ENV === 'production' 
-      ? 'https://thompson-footwear-production-d96f.up.railway.app'
+      ? 'https://thompson-footwear-production.up.railway.app'
       : 'http://localhost:5000');
 
   const safeLocalStorage = {

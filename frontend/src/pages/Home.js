@@ -16,7 +16,7 @@ const Home = () => {
   const [error, setError] = useState(null);
 
   // Use environment variable for API URL, fallback to Railway URL
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://thompson-footwear-production-d96f.up.railway.app';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://thompson-footwear-production.up.railway.app';
   
   // Debug: Log the API URL being used
   console.log('API_BASE_URL:', API_BASE_URL);

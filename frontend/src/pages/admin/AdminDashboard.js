@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 // API Base URL for both development and production
 const API_BASE = process.env.NODE_ENV === 'production' 
-  ? 'https://thompson-footwear-production-d96f.up.railway.app'
+  ? 'https://thompson-footwear-production.up.railway.app'
   : 'http://localhost:5000';
 
 const AdminDashboard = () => {

@@ -25,7 +25,7 @@ const HomePage = () => {
   const [contactError, setContactError] = useState('');
 
   // Fixed: Use Railway URL as fallback instead of localhost
-  const API_URL = process.env.REACT_APP_API_URL || 'https://thompson-footwear-production-d96f.up.railway.app';
+  const API_URL = process.env.REACT_APP_API_URL || 'https://thompson-footwear-production.up.railway.app';
 
   useEffect(() => {
     if (location.state?.welcomeName) {

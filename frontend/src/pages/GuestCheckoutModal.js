@@ -24,7 +24,7 @@ const GuestCheckoutModal = ({ onClose }) => {
   });
 
   // Use environment variable for API URL, fallback to production URL
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://thompson-footwear-production-d96f.up.railway.app';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://thompson-footwear-production.up.railway.app';
 
   const total = cartItems.reduce((sum, item) => sum + parseFloat(item.price), 0);
 
