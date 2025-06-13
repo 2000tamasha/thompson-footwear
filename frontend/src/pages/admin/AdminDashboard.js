@@ -1,6 +1,11 @@
-// AdminDashboard.js – Admin Overview by Sharan Adhikari 24071844
+/// AdminDashboard.js – Admin Overview by Sharan Adhikari 24071844
 
 import React, { useEffect, useState } from 'react';
+
+// API Base URL for both development and production
+const API_BASE = process.env.NODE_ENV === 'production' 
+  ? 'https://thompson-footwear-production-d96f.up.railway.app'
+  : 'http://localhost:5000';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
@@ -17,9 +22,9 @@ const AdminDashboard = () => {
   const fetchStats = async () => {
     try {
       const [ordersRes, usersRes, productsRes] = await Promise.all([
-        fetch('http://localhost:5000/api/orders'),
-        fetch('http://localhost:5000/api/users'),
-        fetch('http://localhost:5000/api/products')
+        fetch(`${API_BASE}/api/orders`),
+        fetch(`${API_BASE}/api/users`),
+        fetch(`${API_BASE}/api/products`)
       ]);
 
       const orders = await ordersRes.json();

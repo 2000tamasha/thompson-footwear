@@ -2,6 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 
+// API Base URL for both development and production
+const API_BASE = process.env.NODE_ENV === 'production' 
+  ? 'https://thompson-footwear-production-d96f.up.railway.app'
+  : 'http://localhost:5000';
+
 const AdminMessages = () => {
   const [messages, setMessages] = useState([]);
 
@@ -11,7 +16,7 @@ const AdminMessages = () => {
 
   const fetchMessages = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/contact');
+      const res = await fetch(`${API_BASE}/api/contact`);
       const data = await res.json();
       setMessages(data);
     } catch (err) {

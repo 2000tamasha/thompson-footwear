@@ -1,4 +1,4 @@
-// AdminProducts.js – Fixed Add Product Button
+// AdminProducts.js – Updated for Railway Deployment
 import React, { useEffect, useState } from 'react';
 
 const AdminProducts = () => {
@@ -10,13 +10,16 @@ const AdminProducts = () => {
   const [productToDelete, setProductToDelete] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Updated API base URL for Railway deployment
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://thompson-footwear-production-d96f.up.railway.app';
+
   useEffect(() => {
     fetchProducts();
   }, []);
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/products');
+      const res = await fetch(`${API_BASE_URL}/api/products`);
       if (!res.ok) throw new Error('Failed to fetch products');
       const data = await res.json();
       setProducts(data);
@@ -41,7 +44,7 @@ const AdminProducts = () => {
     
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:5000/api/products/${productToDelete.id}`, { 
+      const res = await fetch(`${API_BASE_URL}/api/products/${productToDelete.id}`, { 
         method: 'DELETE' 
       });
       if (!res.ok) throw new Error('Failed to delete product');
@@ -105,8 +108,8 @@ const AdminProducts = () => {
     setLoading(true);
     
     const url = isEditing
-      ? `http://localhost:5000/api/products/${form.id}`
-      : 'http://localhost:5000/api/products';
+      ? `${API_BASE_URL}/api/products/${form.id}`
+      : `${API_BASE_URL}/api/products`;
     const method = isEditing ? 'PUT' : 'POST';
 
     try {
@@ -142,7 +145,6 @@ const AdminProducts = () => {
     <div className="admin-products-container" style={{ position: 'relative', zIndex: 1 }}>
       <h2>🛍 Manage Products</h2>
       
-
       <button
         type="button"
         onClick={() => {

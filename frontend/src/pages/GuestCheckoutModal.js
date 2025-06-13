@@ -23,6 +23,9 @@ const GuestCheckoutModal = ({ onClose }) => {
     paymentMethod: 'card'
   });
 
+  // Use environment variable for API URL, fallback to production URL
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://thompson-footwear-production-d96f.up.railway.app';
+
   const total = cartItems.reduce((sum, item) => sum + parseFloat(item.price), 0);
 
   const handleInput = (e) => {
@@ -52,7 +55,7 @@ const GuestCheckoutModal = ({ onClose }) => {
   const handleStripeCheckout = async () => {
     setShowMessage(true);
     try {
-      await fetch('http://localhost:5000/api/orders', {
+      await fetch(`${API_BASE_URL}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -67,7 +70,7 @@ const GuestCheckoutModal = ({ onClose }) => {
       });
 
       const stripe = await loadStripe('pk_test_51RDfRhQmyo6fDX1pbbkVAIPWdD4V2680GmmKGYGnBaA6oM8YwwR5VmbVAXbXG4K0BIiHFp6kqIXjixtFQQOW9CHb00UKW7YphX');
-      const response = await fetch('http://localhost:5000/create-checkout-session', {
+      const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -85,6 +88,7 @@ const GuestCheckoutModal = ({ onClose }) => {
       }, 2500);
 
     } catch (err) {
+      console.error('Order placement failed:', err);
       alert('Order placement failed.');
       setShowMessage(false);
     }

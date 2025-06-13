@@ -20,7 +20,11 @@ const Login = () => {
   const isCheckoutFlow = new URLSearchParams(location.search).get('checkout') === '1';
   const [userName, setUserName] = useState('');
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  // FIXED: Updated API_BASE_URL to use REACT_APP_API_URL first
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 
+    (process.env.NODE_ENV === 'production' 
+      ? 'https://thompson-footwear-production-d96f.up.railway.app'
+      : 'http://localhost:5000');
 
   const safeLocalStorage = {
     setItem: (key, value) => {
@@ -74,7 +78,8 @@ const Login = () => {
       try {
         data = await loginUser(email, password);
       } catch (serviceError) {
-        const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        // FIXED: Changed from /api/auth/login to /api/users/login
+        const response = await fetch(`${API_BASE_URL}/api/users/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -106,7 +111,8 @@ const Login = () => {
       }
       safeLocalStorage.setItem('user', JSON.stringify(user));
 
-      const isAdmin = user?.role === 'admin' || user?.email === 'admin@example.com';
+      // FIXED: Updated admin check to use is_admin field
+      const isAdmin = user?.is_admin === 1 || user?.role === 'admin' || user?.email === 'admin@example.com';
 
       if (isAdmin) {
         navigate('/admin/dashboard');

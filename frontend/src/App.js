@@ -25,40 +25,43 @@ import AdminReviews from './pages/admin/AdminReviews';
 import './App.css';
 
 import { AuthProvider } from './context/authContext';
+import { CartProvider } from './context/cartContext';
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="App">
-          <Navbar />
-          <div className="content">
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<HomePage />} />
-              <Route path="/products" element={<Home />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/success" element={<Success />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/account" element={<Account />} />
-              <Route path="/checkout" element={<SignedInCheckout />} /> 
+        <CartProvider>
+          <div className="App">
+            <Navbar />
+            <div className="content">
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<HomePage />} />
+                <Route path="/products" element={<Home />} />
+                <Route path="/product/:id" element={<ProductDetail />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/success" element={<Success />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/account" element={<Account />} />
+                <Route path="/checkout" element={<SignedInCheckout />} /> 
 
-              {/* Admin Routes */}
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route path="dashboard" element={<AdminDashboard />} />
-                <Route path="orders" element={<AdminOrders />} />
-                <Route path="products" element={<AdminProducts />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="messages" element={<AdminMessages />} />
-                <Route path="reviews" element={<AdminReviews />} />
-              </Route>
-            </Routes>
+                {/* Admin Routes */}
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route path="dashboard" element={<AdminDashboard />} />
+                  <Route path="orders" element={<AdminOrders />} />
+                  <Route path="products" element={<AdminProducts />} />
+                  <Route path="users" element={<AdminUsers />} />
+                  <Route path="messages" element={<AdminMessages />} />
+                  <Route path="reviews" element={<AdminReviews />} />
+                </Route>
+              </Routes>
+            </div>
+            <Footer />
           </div>
-          <Footer />
-        </div>
+        </CartProvider>
       </AuthProvider>
     </Router>
   );

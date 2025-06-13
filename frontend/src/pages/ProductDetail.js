@@ -27,8 +27,11 @@ const ProductDetail = () => {
   const [reviewText, setReviewText] = useState('');
   const [userEmail, setUserEmail] = useState('');
 
-  // Get API URL from environment variable or fallback to localhost for development
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  // FIXED: Updated API URL configuration to match other components
+  const API_URL = process.env.REACT_APP_API_URL || 
+    (process.env.NODE_ENV === 'production' 
+      ? 'https://thompson-footwear-production-d96f.up.railway.app'
+      : 'http://localhost:5000');
 
   useEffect(() => {
     axios.get(`${API_URL}/api/products/${id}`)
@@ -40,8 +43,13 @@ const ProductDetail = () => {
   }, [id, API_URL]);
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/reviews/${id}`).then(res => setReviews(res.data));
-    axios.get(`${API_URL}/api/reviews/${id}/average`).then(res => setAverage(res.data.average || 0));
+    axios.get(`${API_URL}/api/reviews/${id}`)
+      .then(res => setReviews(res.data))
+      .catch(err => console.error("Error fetching reviews:", err));
+    
+    axios.get(`${API_URL}/api/reviews/${id}/average`)
+      .then(res => setAverage(res.data.average || 0))
+      .catch(err => console.error("Error fetching average rating:", err));
   }, [id, API_URL]);
 
   const handleSubmitReview = async (e) => {
@@ -66,6 +74,7 @@ const ProductDetail = () => {
       setShowReviewSuccess(true);
       setTimeout(() => setShowReviewSuccess(false), 3000); // auto-hide after 3s
 
+      // Refresh reviews and average
       const resReviews = await axios.get(`${API_URL}/api/reviews/${id}`);
       const resAvg = await axios.get(`${API_URL}/api/reviews/${id}/average`);
       setReviews(resReviews.data);
@@ -77,20 +86,30 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
-    if (!selectedSize) return;
+    if (!selectedSize) {
+      alert('Please select a size before adding to cart.');
+      return;
+    }
     const productToAdd = { ...product, selectedSize, quantity };
     addToCart(productToAdd);
     setShowAddedModal(true);
   };
 
   const handleAddToFavourites = () => {
-    let favs = JSON.parse(localStorage.getItem('favourites')) || [];
-    const alreadyExists = favs.find(item => item.id === product.id);
-    if (!alreadyExists) {
-      favs.push(product);
-      localStorage.setItem('favourites', JSON.stringify(favs));
+    try {
+      let favs = JSON.parse(localStorage.getItem('favourites')) || [];
+      const alreadyExists = favs.find(item => item.id === product.id);
+      if (!alreadyExists) {
+        favs.push(product);
+        localStorage.setItem('favourites', JSON.stringify(favs));
+        setShowFavModal(true);
+      } else {
+        alert('This item is already in your favourites!');
+      }
+    } catch (error) {
+      console.error('Error adding to favourites:', error);
+      alert('Failed to add to favourites.');
     }
-    setShowFavModal(true);
   };
 
   const handleQuantityChange = (type) => {

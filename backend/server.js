@@ -18,7 +18,7 @@ const corsOptions = {
   origin: [
     'https://thompson-footwear-production-d96f.up.railway.app',
     'http://localhost:3000', // Keep for local development
-    'http://localhost:3001'  // In case fo  different port
+    'http://localhost:3001'  // In case of different port (FIXED TYPO)
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -152,4 +152,14 @@ app.listen(PORT, HOST, () => {
   console.log(`🚀 Thompson Footwear Server running on ${HOST}:${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🌐 CORS enabled for production domain`);
+  
+  // Test database connection on startup
+  db.getConnection()
+    .then(connection => {
+      console.log('✅ Database connected successfully on server start!');
+      connection.release();
+    })
+    .catch(err => {
+      console.error('❌ Database connection failed on server start:', err.message);
+    });
 });

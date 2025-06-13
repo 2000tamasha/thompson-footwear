@@ -10,6 +10,14 @@ const SignedInCheckout = () => {
   const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [showMessage, setShowMessage] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  // FIXED: Added proper API URL configuration
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 
+    (process.env.NODE_ENV === 'production' 
+      ? 'https://thompson-footwear-production-d96f.up.railway.app'
+      : 'http://localhost:5000');
 
   const [form, setForm] = useState({
     name: user?.name || '',
@@ -27,36 +35,84 @@ const SignedInCheckout = () => {
   const handleInput = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
   const total = cartItems.reduce((sum, item) => sum + parseFloat(item.price), 0);
 
+  const validateStep1 = () => {
+    if (!form.name.trim()) return 'Please enter your full name';
+    if (!form.email.trim()) return 'Please enter your email';
+    if (!form.phone.trim()) return 'Please enter your phone number';
+    if (!form.address.trim()) return 'Please enter your address';
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) return 'Please enter a valid email address';
+    
+    return null;
+  };
+
+  const validateStep2 = () => {
+    if (form.paymentMethod === 'card' || form.paymentMethod === 'afterpay') {
+      if (!form.cardName.trim()) return 'Please enter the name on card';
+      if (!form.cardNumber.trim()) return 'Please enter card number';
+      if (!form.cardExpiry.trim()) return 'Please enter card expiry';
+      if (!form.cardCvc.trim()) return 'Please enter CVC';
+      
+      if (form.cardNumber.replace(/\s/g, '').length < 13) return 'Please enter a valid card number';
+      if (form.cardCvc.length < 3) return 'Please enter a valid CVC';
+    }
+    
+    if (form.paymentMethod === 'paypal') {
+      if (!form.paypalEmail.trim()) return 'Please enter PayPal email';
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.paypalEmail)) return 'Please enter a valid PayPal email';
+    }
+    
+    return null;
+  };
+
   const nextStep = () => {
-    if (step === 1 && (!form.name || !form.email || !form.phone || !form.address)) {
-      alert('Please fill all delivery fields');
-      return;
+    setError('');
+    
+    if (step === 1) {
+      const error = validateStep1();
+      if (error) {
+        setError(error);
+        return;
+      }
     }
+    
     if (step === 2) {
-      if ((form.paymentMethod === 'card' || form.paymentMethod === 'afterpay') &&
-        (!form.cardName || !form.cardNumber || !form.cardExpiry || !form.cardCvc)) {
-        alert('Please fill all card details');
-        return;
-      }
-      if (form.paymentMethod === 'paypal' && !form.paypalEmail) {
-        alert('Please enter PayPal email');
+      const error = validateStep2();
+      if (error) {
+        setError(error);
         return;
       }
     }
+    
     setStep(prev => prev + 1);
   };
 
-  const prevStep = () => setStep(prev => prev - 1);
+  const prevStep = () => {
+    setStep(prev => prev - 1);
+    setError('');
+  };
 
   const handleCheckout = async () => {
+    if (cartItems.length === 0) {
+      setError('Your cart is empty');
+      return;
+    }
+
+    setIsLoading(true);
     setShowMessage(true);
+    setError('');
 
     try {
-      await fetch('http://localhost:5000/orders', {
+      // FIXED: Save order to database using correct API endpoint
+      const orderResponse = await fetch(`${API_BASE_URL}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -70,30 +126,75 @@ const SignedInCheckout = () => {
         })
       });
 
+      if (!orderResponse.ok) {
+        throw new Error('Failed to save order');
+      }
+
+      // FIXED: Create Stripe checkout session using correct API endpoint
       const stripe = await loadStripe('pk_test_51RDfRhQmyo6fDX1pbbkVAIPWdD4V2680GmmKGYGnBaA6oM8YwwR5VmbVAXbXG4K0BIiHFp6kqIXjixtFQQOW9CHb00UKW7YphX');
-      const res = await fetch('http://localhost:5000/create-checkout-session', {
+      
+      const sessionResponse = await fetch(`${API_BASE_URL}/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: cartItems.map(item => ({
             name: item.name,
-            quantity: 1,
-            price: Math.round(parseFloat(item.price) * 100),
+            quantity: item.quantity || 1,
+            price: Math.round(parseFloat(item.price) * 100), // Convert to cents
           }))
         })
       });
 
-      const session = await res.json();
+      if (!sessionResponse.ok) {
+        throw new Error('Failed to create payment session');
+      }
 
-      // Delay to show message
+      const session = await sessionResponse.json();
+
+      // Delay to show success message
       setTimeout(() => {
         stripe.redirectToCheckout({ sessionId: session.id });
       }, 2500);
+
     } catch (err) {
-      alert('Error placing order. Please try again.');
+      console.error('Checkout error:', err);
+      setError('Error placing order. Please try again.');
       setShowMessage(false);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const formatCardNumber = (value) => {
+    // Remove all non-digits
+    const cleaned = value.replace(/\D/g, '');
+    // Add spaces every 4 digits
+    const formatted = cleaned.replace(/(\d{4})(?=\d)/g, '$1 ');
+    return formatted.substring(0, 19); // Limit to 16 digits + 3 spaces
+  };
+
+  const formatExpiry = (value) => {
+    const cleaned = value.replace(/\D/g, '');
+    if (cleaned.length >= 2) {
+      return cleaned.substring(0, 2) + '/' + cleaned.substring(2, 4);
+    }
+    return cleaned;
+  };
+
+  if (cartItems.length === 0) {
+    return (
+      <div style={{ padding: '40px', fontFamily: 'Poppins', marginTop: '100px', textAlign: 'center' }}>
+        <h2>Your cart is empty</h2>
+        <p>Add some items to your cart before checking out.</p>
+        <button 
+          onClick={() => window.location.href = '/products'} 
+          style={btn}
+        >
+          Continue Shopping
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: '40px', fontFamily: 'Poppins', marginTop: '100px' }}>
@@ -113,6 +214,20 @@ const SignedInCheckout = () => {
         </div>
       )}
 
+      {error && (
+        <div style={{
+          backgroundColor: '#f8d7da',
+          color: '#721c24',
+          padding: '15px',
+          borderRadius: '5px',
+          marginBottom: '20px',
+          textAlign: 'center',
+          fontWeight: 'bold'
+        }}>
+          ❌ {error}
+        </div>
+      )}
+
       <div style={stepIndicator}>
         <strong style={step === 1 ? active : inactive}>1. Delivery</strong>
         <strong style={step === 2 ? active : inactive}>2. Payment</strong>
@@ -121,15 +236,55 @@ const SignedInCheckout = () => {
 
       {step === 1 && (
         <>
-          <label>Full Name</label>
-          <input name="name" value={form.name} onChange={handleInput} style={input} />
-          <label>Email</label>
-          <input name="email" value={form.email} onChange={handleInput} style={input} />
-          <label>Phone</label>
-          <input name="phone" value={form.phone} onChange={handleInput} style={input} />
-          <label>Address</label>
-          <input name="address" value={form.address} onChange={handleInput} style={input} />
-          <button onClick={nextStep} style={btn}>Continue to Payment</button>
+          <h3>Delivery Information</h3>
+          <label>Full Name *</label>
+          <input 
+            name="name" 
+            value={form.name} 
+            onChange={handleInput} 
+            style={input}
+            placeholder="Enter your full name"
+            disabled={isLoading}
+          />
+          
+          <label>Email *</label>
+          <input 
+            name="email" 
+            type="email"
+            value={form.email} 
+            onChange={handleInput} 
+            style={input}
+            placeholder="your@email.com"
+            disabled={isLoading}
+          />
+          
+          <label>Phone *</label>
+          <input 
+            name="phone" 
+            value={form.phone} 
+            onChange={handleInput} 
+            style={input}
+            placeholder="Enter your phone number"
+            disabled={isLoading}
+          />
+          
+          <label>Address *</label>
+          <input 
+            name="address" 
+            value={form.address} 
+            onChange={handleInput} 
+            style={input}
+            placeholder="Enter your full address"
+            disabled={isLoading}
+          />
+          
+          <button 
+            onClick={nextStep} 
+            style={btn}
+            disabled={isLoading}
+          >
+            Continue to Payment
+          </button>
         </>
       )}
 
@@ -137,51 +292,131 @@ const SignedInCheckout = () => {
         <>
           <h3>Select Payment Method</h3>
           <div style={paymentOptions}>
-            <div onClick={() => setForm({ ...form, paymentMethod: 'card' })} style={optionBox(form.paymentMethod === 'card')}>💳 Card</div>
-            <div onClick={() => setForm({ ...form, paymentMethod: 'paypal' })} style={optionBox(form.paymentMethod === 'paypal')}>🅿️ PayPal</div>
-            <div onClick={() => setForm({ ...form, paymentMethod: 'afterpay' })} style={optionBox(form.paymentMethod === 'afterpay')}>🅰️ Afterpay</div>
+            <div onClick={() => !isLoading && setForm({ ...form, paymentMethod: 'card' })} style={optionBox(form.paymentMethod === 'card')}>💳 Card</div>
+            <div onClick={() => !isLoading && setForm({ ...form, paymentMethod: 'paypal' })} style={optionBox(form.paymentMethod === 'paypal')}>🅿️ PayPal</div>
+            <div onClick={() => !isLoading && setForm({ ...form, paymentMethod: 'afterpay' })} style={optionBox(form.paymentMethod === 'afterpay')}>🅰️ Afterpay</div>
           </div>
 
           {(form.paymentMethod === 'card' || form.paymentMethod === 'afterpay') && (
             <>
-              <label>Name on Card</label>
-              <input name="cardName" value={form.cardName} onChange={handleInput} style={input} />
-              <label>Card Number</label>
-              <input name="cardNumber" value={form.cardNumber} onChange={handleInput} style={input} maxLength="16" />
-              <label>Expiry (MM/YY)</label>
-              <input name="cardExpiry" value={form.cardExpiry} onChange={handleInput} style={input} />
-              <label>CVC</label>
-              <input name="cardCvc" value={form.cardCvc} onChange={handleInput} style={input} maxLength="4" />
+              <label>Name on Card *</label>
+              <input 
+                name="cardName" 
+                value={form.cardName} 
+                onChange={handleInput} 
+                style={input}
+                placeholder="Enter name as on card"
+                disabled={isLoading}
+              />
+              
+              <label>Card Number *</label>
+              <input 
+                name="cardNumber" 
+                value={form.cardNumber} 
+                onChange={(e) => handleInput({ target: { name: 'cardNumber', value: formatCardNumber(e.target.value) } })}
+                style={input}
+                placeholder="1234 5678 9012 3456"
+                maxLength="19"
+                disabled={isLoading}
+              />
+              
+              <label>Expiry (MM/YY) *</label>
+              <input 
+                name="cardExpiry" 
+                value={form.cardExpiry} 
+                onChange={(e) => handleInput({ target: { name: 'cardExpiry', value: formatExpiry(e.target.value) } })}
+                style={input}
+                placeholder="MM/YY"
+                maxLength="5"
+                disabled={isLoading}
+              />
+              
+              <label>CVC *</label>
+              <input 
+                name="cardCvc" 
+                value={form.cardCvc} 
+                onChange={handleInput} 
+                style={input}
+                placeholder="123"
+                maxLength="4"
+                disabled={isLoading}
+              />
             </>
           )}
 
           {form.paymentMethod === 'paypal' && (
             <>
-              <label>PayPal Email</label>
-              <input name="paypalEmail" value={form.paypalEmail} onChange={handleInput} style={input} />
+              <label>PayPal Email *</label>
+              <input 
+                name="paypalEmail" 
+                type="email"
+                value={form.paypalEmail} 
+                onChange={handleInput} 
+                style={input}
+                placeholder="your@paypal.com"
+                disabled={isLoading}
+              />
             </>
           )}
-          <button onClick={prevStep} style={backBtn}>Back</button>
-          <button onClick={nextStep} style={btn}>Continue to Review</button>
+          
+          <button 
+            onClick={prevStep} 
+            style={backBtn}
+            disabled={isLoading}
+          >
+            Back
+          </button>
+          <button 
+            onClick={nextStep} 
+            style={btn}
+            disabled={isLoading}
+          >
+            Continue to Review
+          </button>
         </>
       )}
 
       {step === 3 && (
         <>
           <h3>Review Order</h3>
-          <p><strong>Name:</strong> {form.name}</p>
-          <p><strong>Email:</strong> {form.email}</p>
-          <p><strong>Phone:</strong> {form.phone}</p>
-          <p><strong>Address:</strong> {form.address}</p>
-          <p><strong>Payment:</strong> {form.paymentMethod.toUpperCase()}</p>
+          <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+            <p><strong>Name:</strong> {form.name}</p>
+            <p><strong>Email:</strong> {form.email}</p>
+            <p><strong>Phone:</strong> {form.phone}</p>
+            <p><strong>Address:</strong> {form.address}</p>
+            <p><strong>Payment:</strong> {form.paymentMethod.toUpperCase()}</p>
+          </div>
+          
           <hr />
           <h4>Cart Summary</h4>
-          {cartItems.map((item, idx) => (
-            <p key={idx}>{item.name} - ${parseFloat(item.price).toFixed(2)}</p>
-          ))}
-          <p><strong>Total:</strong> ${total.toFixed(2)}</p>
-          <button onClick={prevStep} style={backBtn}>Back</button>
-          <button onClick={handleCheckout} style={btn}>Place Order & Pay</button>
+          <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+            {cartItems.map((item, idx) => (
+              <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <span>{item.name} {item.selectedSize ? `(${item.selectedSize})` : ''}</span>
+                <span>${parseFloat(item.price).toFixed(2)}</span>
+              </div>
+            ))}
+            <hr style={{ margin: '15px 0' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '18px' }}>
+              <span>Total:</span>
+              <span>${total.toFixed(2)}</span>
+            </div>
+          </div>
+          
+          <button 
+            onClick={prevStep} 
+            style={backBtn}
+            disabled={isLoading}
+          >
+            Back
+          </button>
+          <button 
+            onClick={handleCheckout} 
+            style={{ ...btn, opacity: isLoading ? 0.7 : 1 }}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Processing...' : 'Place Order & Pay'}
+          </button>
         </>
       )}
     </div>
@@ -189,19 +424,71 @@ const SignedInCheckout = () => {
 };
 
 // Styles
-const input = { width: '100%', padding: '10px', marginBottom: '15px', borderRadius: '5px', border: '1px solid #ccc' };
-const btn = { padding: '12px 20px', backgroundColor: 'black', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', marginTop: '10px' };
-const backBtn = { ...btn, backgroundColor: 'gray', marginRight: '10px' };
-const stepIndicator = { display: 'flex', gap: '20px', marginBottom: '20px' };
-const active = { color: 'black', fontWeight: 'bold' };
-const inactive = { color: '#aaa' };
-const paymentOptions = { display: 'flex', gap: '20px', marginTop: '10px', marginBottom: '20px' };
+const input = { 
+  width: '100%', 
+  padding: '12px', 
+  marginBottom: '15px', 
+  borderRadius: '5px', 
+  border: '1px solid #ccc',
+  fontSize: '16px',
+  fontFamily: 'Poppins'
+};
+
+const btn = { 
+  padding: '12px 20px', 
+  backgroundColor: 'black', 
+  color: 'white', 
+  border: 'none', 
+  borderRadius: '5px', 
+  cursor: 'pointer', 
+  marginTop: '10px',
+  fontSize: '16px',
+  fontWeight: 'bold',
+  fontFamily: 'Poppins',
+  transition: 'opacity 0.2s'
+};
+
+const backBtn = { 
+  ...btn, 
+  backgroundColor: 'gray', 
+  marginRight: '10px' 
+};
+
+const stepIndicator = { 
+  display: 'flex', 
+  gap: '20px', 
+  marginBottom: '30px',
+  paddingBottom: '15px',
+  borderBottom: '1px solid #eee'
+};
+
+const active = { 
+  color: 'black', 
+  fontWeight: 'bold' 
+};
+
+const inactive = { 
+  color: '#aaa' 
+};
+
+const paymentOptions = { 
+  display: 'flex', 
+  gap: '20px', 
+  marginTop: '10px', 
+  marginBottom: '20px',
+  flexWrap: 'wrap'
+};
+
 const optionBox = (selected) => ({
-  padding: '10px 20px',
-  borderRadius: '6px',
+  padding: '15px 20px',
+  borderRadius: '8px',
   border: selected ? '2px solid black' : '1px solid #ccc',
   cursor: 'pointer',
-  backgroundColor: selected ? '#f0f0f0' : '#fff'
+  backgroundColor: selected ? '#f0f0f0' : '#fff',
+  fontWeight: selected ? 'bold' : 'normal',
+  transition: 'all 0.2s',
+  minWidth: '120px',
+  textAlign: 'center'
 });
 
 export default SignedInCheckout;

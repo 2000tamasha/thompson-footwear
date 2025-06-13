@@ -2,6 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 
+// API Base URL for both development and production
+const API_BASE = process.env.NODE_ENV === 'production' 
+  ? 'https://thompson-footwear-production-d96f.up.railway.app'
+  : 'http://localhost:5000';
+
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -14,7 +19,7 @@ const AdminOrders = () => {
   }, []);
 
   const fetchOrders = () => {
-    fetch('http://localhost:5000/api/orders')
+    fetch(`${API_BASE}/api/orders`)
       .then(res => res.json())
       .then(data => setOrders(data))
       .catch(err => {
@@ -45,7 +50,7 @@ const AdminOrders = () => {
     
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:5000/api/orders/${orderToDelete.id}`, { 
+      const res = await fetch(`${API_BASE}/api/orders/${orderToDelete.id}`, { 
         method: 'DELETE' 
       });
       

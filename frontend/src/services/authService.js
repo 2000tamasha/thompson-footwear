@@ -1,7 +1,11 @@
 //sharan adhikari 24071844
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:5000';
+// FIXED: Updated to use REACT_APP_API_URL environment variable first
+const API_BASE = process.env.REACT_APP_API_URL || 
+  (process.env.NODE_ENV === 'production' 
+    ? 'https://thompson-footwear-production-d96f.up.railway.app'
+    : 'http://localhost:5000');
 
 export const loginUser = async (email, password) => {
   try {
