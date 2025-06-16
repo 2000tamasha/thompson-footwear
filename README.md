@@ -83,8 +83,7 @@ Developed using **React.js**, `react-router-dom`, and **Stripe.js**:
 
 ## 🚀 Deployment
 
-> Currently in **local development** phase. Final deployment will be done using **Heroku** 
-
+> Final deployment done through railway.
 ---
 
 ## 🛠️ Technologies Used
@@ -105,14 +104,6 @@ Please open an [Issue](https://github.com/yourusername/thompson-footwear/issues)
 
 ---
 
-## 📅 What's Next (Sprint 2 Plans)
-
-- [ ] Complete JWT-based authentication
-- [ ] Enable product CRUD from Admin
-- [ ] Upload product images via admin panel
-- [ ] Enable mobile responsiveness
-- [ ] Apply accessibility improvements
-- [ ] Add automated email confirmation on order
 
 ---
 
